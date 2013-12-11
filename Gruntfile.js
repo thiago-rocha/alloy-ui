@@ -90,23 +90,23 @@ module.exports = function(grunt) {
                 dest: 'src-temp/',
                 expand: true
             },
-            css: {
+            fonts: {
                 files: [
                     {
-                        src: 'build/aui-css/css/responsive.css',
-                        dest: 'build/aui-css/css/bootstrap-responsive.css'
-                    }
-                ]
-            },
-            img: {
-                files: [
-                    {
-                        src: path.join(ROOT, '<%= pkg.dependencies["alloy-bootstrap"].folder %>', 'img/glyphicons-halflings-white.png'),
-                        dest: 'build/aui-css/img/glyphicons-halflings-white.png'
+                        src: path.join(ROOT, '<%= pkg.dependencies["alloy-bootstrap"].folder %>', 'fonts/glyphicons-halflings-regular.svg'),
+                        dest: 'build/aui-css/fonts/glyphicons-halflings-regular.svg'
                     },
                     {
-                        src: path.join(ROOT, '<%= pkg.dependencies["alloy-bootstrap"].folder %>', 'img/glyphicons-halflings.png'),
-                        dest: 'build/aui-css/img/glyphicons-halflings.png'
+                        src: path.join(ROOT, '<%= pkg.dependencies["alloy-bootstrap"].folder %>', 'fonts/glyphicons-halflings-regular.ttf'),
+                        dest: 'build/aui-css/fonts/glyphicons-halflings-regular.ttf'
+                    },
+                    {
+                        src: path.join(ROOT, '<%= pkg.dependencies["alloy-bootstrap"].folder %>', 'fonts/glyphicons-halflings-regular.eot'),
+                        dest: 'build/aui-css/fonts/glyphicons-halflings-regular.eot'
+                    },
+                    {
+                        src: path.join(ROOT, '<%= pkg.dependencies["alloy-bootstrap"].folder %>', 'fonts/glyphicons-halflings-regular.woff'),
+                        dest: 'build/aui-css/fonts/glyphicons-halflings-regular.woff'
                     }
                 ]
             }
@@ -139,9 +139,6 @@ module.exports = function(grunt) {
             api: [
                 'src-temp',
             ],
-            css: [
-                'build/aui-css/css/responsive.css',
-            ],
             zip: [
                 'alloy-<%= pkg["version"] %>.zip',
                 'cdn-alloy-<%= pkg["version"] %>.zip'
@@ -155,8 +152,7 @@ module.exports = function(grunt) {
         cssmin: {
             dist: {
                 files: {
-                    'build/aui-css/css/bootstrap.min.css': ['build/aui-css/css/bootstrap.css'],
-                    'build/aui-css/css/bootstrap-responsive.min.css': ['build/aui-css/css/bootstrap-responsive.css']
+                    'build/aui-css/css/bootstrap.min.css': ['build/aui-css/css/bootstrap.css']
                 }
             }
         },
@@ -216,7 +212,7 @@ module.exports = function(grunt) {
     grunt.registerTask('all', ['bootstrap', 'build']);
     grunt.registerTask('api', ['copy:api', 'api-include', 'api-build', 'clean:api']);
     grunt.registerTask('api-deploy', ['api', 'api-push']);
-    grunt.registerTask('bootstrap', ['compass', 'copy:css', 'cssmin', 'copy:img', 'clean:css']);
+    grunt.registerTask('bootstrap', ['compass', 'cssmin', 'copy:fonts']);
     grunt.registerTask('format', ['jsbeautifier']);
     grunt.registerTask('lint', ['jshint']);
     grunt.registerTask('release', ['clean:zip', 'all', 'zip:release']);
