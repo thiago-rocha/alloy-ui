@@ -8,7 +8,7 @@
 var CSS_CLASSES = 'cssClasses',
     DOWN = 'down',
     ELEMENTS = 'elements',
-    ICON = 'icon',
+    GLYPHICON = 'glyphicon',
     OFF = 'off',
     ON = 'on',
     RATING = 'rating',
@@ -16,10 +16,13 @@ var CSS_CLASSES = 'cssClasses',
     THUMBS = 'thumbs',
     UP = 'up',
 
+    _SPACE = ' ',
+
     getCN = A.getClassName,
 
-    CSS_ICON_THUMBS_DOWN = getCN(ICON, THUMBS, DOWN),
-    CSS_ICON_THUMBS_UP = getCN(ICON, THUMBS, UP),
+    CSS_GLYPHICON = getCN(GLYPHICON),
+    CSS_ICON_THUMBS_DOWN = getCN(GLYPHICON, THUMBS, DOWN),
+    CSS_ICON_THUMBS_UP = getCN(GLYPHICON, THUMBS, UP),
     CSS_RATING_OFF = getCN(RATING, OFF),
     CSS_RATING_ON = getCN(RATING, ON);
 
@@ -65,12 +68,12 @@ var ThumbRating = A.Component.create({
          */
         cssClasses: {
             value: {
-                down: CSS_ICON_THUMBS_DOWN,
+                down: [CSS_GLYPHICON, CSS_ICON_THUMBS_DOWN].join(_SPACE),
                 element: CSS_RATING_OFF,
                 hover: CSS_RATING_ON,
                 off: CSS_RATING_OFF,
                 on: CSS_RATING_ON,
-                up: CSS_ICON_THUMBS_UP
+                up: [CSS_ICON_THUMBS_UP, CSS_GLYPHICON].join(_SPACE)
             }
         },
 

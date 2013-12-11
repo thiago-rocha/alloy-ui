@@ -72,6 +72,7 @@ var Lang = A.Lang,
     DISABLED = 'disabled',
     END_DATE = 'endDate',
     EVENT_RECORDER = 'eventRecorder',
+    GLYPHICON = 'glyphicon',
     HD = 'hd',
     HEADER = 'header',
     HEADER_NODE = 'headerNode',
@@ -124,7 +125,7 @@ var Lang = A.Lang,
 
     getCN = A.getClassName,
 
-    CSS_ICON = getCN(ICON),
+    CSS_GLYPHICON = getCN(GLYPHICON),
     CSS_SCHEDULER_CONTROLS = getCN(SCHEDULER_BASE, CONTROLS),
 
     CSS_SCHEDULER_HD = getCN(SCHEDULER_BASE, HD),
@@ -139,8 +140,8 @@ var Lang = A.Lang,
     CSS_SCHEDULER_VIEW_SCROLLABLE = getCN(SCHEDULER_VIEW, SCROLLABLE),
     CSS_SCHEDULER_VIEW_SELECTED = getCN(ACTIVE),
     CSS_BTN = getCN(BTN),
-    CSS_ICON_CHEVRON_RIGHT = getCN(ICON, CHEVRON, RIGHT),
-    CSS_ICON_CHEVRON_LEFT = getCN(ICON, CHEVRON, LEFT),
+    CSS_ICON_CHEVRON_RIGHT = getCN(GLYPHICON, CHEVRON, RIGHT),
+    CSS_ICON_CHEVRON_LEFT = getCN(GLYPHICON, CHEVRON, LEFT),
     CSS_SCHEDULER_VIEWS = getCN(SCHEDULER_BASE, VIEWS),
 
     CSS_SCHEDULER_EVENT = getCN(SCHEDULER_EVENT),
@@ -164,9 +165,11 @@ var Lang = A.Lang,
     TPL_HTML_CLOSE_SPAN = '</span>',
     TPL_SCHEDULER_CONTROLS = '<div class="span7 ' + CSS_SCHEDULER_CONTROLS + '"></div>',
     TPL_SCHEDULER_HD = '<div class="row-fluid ' + CSS_SCHEDULER_HD + '"></div>',
-    TPL_SCHEDULER_ICON_NEXT = '<button type="button" class="' + [CSS_SCHEDULER_ICON_NEXT, CSS_BTN].join(_SPACE) +
+    TPL_SCHEDULER_ICON_NEXT = '<button type="button" class="' + [CSS_GLYPHICON, CSS_SCHEDULER_ICON_NEXT, CSS_BTN].join(
+        _SPACE) +
         '"><i class="' + CSS_ICON_CHEVRON_RIGHT + '"></i></button>',
-    TPL_SCHEDULER_ICON_PREV = '<button type="button" class="' + [CSS_SCHEDULER_ICON_PREV, CSS_BTN].join(_SPACE) +
+    TPL_SCHEDULER_ICON_PREV = '<button type="button" class="' + [CSS_GLYPHICON, CSS_SCHEDULER_ICON_PREV, CSS_BTN].join(
+        _SPACE) +
         '"><i class="' + CSS_ICON_CHEVRON_LEFT + '"></i></button>',
     TPL_SCHEDULER_NAV = '<div class="btn-group"></div>',
     TPL_SCHEDULER_TODAY = '<button type="button" class="' + [CSS_SCHEDULER_TODAY, CSS_BTN].join(_SPACE) +
@@ -440,9 +443,10 @@ var SchedulerEvent = A.Component.create({
 
     prototype: {
         EVENT_NODE_TEMPLATE: '<div class="' + CSS_SCHEDULER_EVENT + '">' + '<div class="' + CSS_SCHEDULER_EVENT_TITLE + '"></div>' + '<div class="' + CSS_SCHEDULER_EVENT_CONTENT + '"></div>' + '<div class="' + CSS_SCHEDULER_EVENT_ICONS + '">' + '<span class="' + [
-            CSS_ICON, CSS_SCHEDULER_EVENT_ICON_DISABLED].join(_SPACE) + '"></span>' + '<span class="' + [CSS_ICON,
-            CSS_SCHEDULER_EVENT_ICON_MEETING].join(_SPACE) + '"></span>' + '<span class="' + [CSS_ICON,
-            CSS_SCHEDULER_EVENT_ICON_REMINDER].join(_SPACE) + '"></span>' + '<span class="' + [CSS_ICON,
+            CSS_GLYPHICON, CSS_SCHEDULER_EVENT_ICON_DISABLED].join(_SPACE) + '"></span>' + '<span class="' + [
+            CSS_GLYPHICON,
+            CSS_SCHEDULER_EVENT_ICON_MEETING].join(_SPACE) + '"></span>' + '<span class="' + [CSS_GLYPHICON,
+            CSS_SCHEDULER_EVENT_ICON_REMINDER].join(_SPACE) + '"></span>' + '<span class="' + [CSS_GLYPHICON,
             CSS_SCHEDULER_EVENT_ICON_REPEATED].join(_SPACE) + '"></span>' + '</div>' + '</div>',
 
         /**

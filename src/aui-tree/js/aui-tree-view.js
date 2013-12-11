@@ -18,6 +18,7 @@ var L = A.Lang,
     CONTENT_BOX = 'contentBox',
     DOT = '.',
     FILE = 'file',
+    GLYPHICON = 'GLYPHICON',
     HITAREA = 'hitarea',
     ICON = 'icon',
     INVALID = 'invalid',
@@ -451,7 +452,7 @@ var isNumber = L.isNumber,
     DDM = A.DD.DDM,
 
     CSS_CLEARFIX = getCN(CLEARFIX),
-    CSS_ICON = getCN(ICON),
+    CSS_GLYPHICON = getCN(GLYPHICON),
     CSS_TREE_DRAG_HELPER = getCN(TREE, DRAG, HELPER),
     CSS_TREE_DRAG_HELPER_CONTENT = getCN(TREE, DRAG, HELPER, CONTENT),
     CSS_TREE_DRAG_HELPER_LABEL = getCN(TREE, DRAG, HELPER, LABEL),
@@ -464,7 +465,7 @@ var isNumber = L.isNumber,
 
     HELPER_TPL = '<div class="' + CSS_TREE_DRAG_HELPER + '">' +
         '<div class="' + [CSS_TREE_DRAG_HELPER_CONTENT, CSS_CLEARFIX].join(SPACE) + '">' +
-        '<span class="' + CSS_ICON + '"></span>' +
+        '<span class="' + CSS_GLYPHICON + '"></span>' +
         '<span class="' + CSS_TREE_DRAG_HELPER_LABEL + '"></span>' +
         '</div>' +
         '</div>';

@@ -51,11 +51,11 @@ var Lang = A.Lang,
     EDITOR = 'editor',
     ELEMENT = 'element',
     ELEMENT_NAME = 'elementName',
+    GLYPHICON = 'glyphicon',
     GRIP = 'grip',
     HANDLE = 'handle',
     HIDE = 'hide',
     HIDE_ON_SAVE = 'hideOnSave',
-    ICON = 'icon',
     INIT_EDIT = 'initEdit',
     INIT_TOOLBAR = 'initToolbar',
     INIT_VALIDATOR = 'initValidator',
@@ -79,6 +79,7 @@ var Lang = A.Lang,
     REMOVE = 'remove',
     RENDER = 'render',
     RENDERED = 'rendered',
+    RESIZE = 'resize',
     RETURN = 'return',
     ROW = 'row',
     SAVE = 'save',
@@ -92,6 +93,7 @@ var Lang = A.Lang,
     UNESCAPE_VALUE = 'unescapeValue',
     VALIDATOR = 'validator',
     VALUE = 'value',
+    VERTICAL = 'vertical',
     VERTICAL = 'vertical',
     VISIBLE = 'visible',
     WRAPPER = 'wrapper',
@@ -119,8 +121,8 @@ var Lang = A.Lang,
     CSS_CELLEDITOR_ELEMENT = AgetClassName(CELLEDITOR, ELEMENT),
     CSS_CELLEDITOR_OPTION = AgetClassName(CELLEDITOR, OPTION),
     CSS_DATATABLE_EDITABLE = AgetClassName(DATATABLE, EDITABLE),
-    CSS_ICON = AgetClassName(ICON),
-    CSS_ICON_GRIP_DOTTED_VERTICAL = AgetClassName(ICON, GRIP, DOTTED, VERTICAL),
+    CSS_ICON = AgetClassName(GLYPHICON),
+    CSS_ICON_GRIP_DOTTED_VERTICAL = AgetClassName(GLYPHICON, RESIZE, VERTICAL),
 
     TPL_BR = '<br/>';
 
@@ -977,7 +979,7 @@ var BaseCellEditor = A.Component.create({
                                 click: A.bind(instance._handleSaveEvent, instance)
                             },
                             label: strings[SAVE],
-                            icon: 'icon-ok-sign'
+                            icon: 'glyphicon glyphicon-ok-sign'
                         },
                         {
                             on: {
@@ -1130,7 +1132,7 @@ var BaseCellEditor = A.Component.create({
                     toolbar.add(
                         [
                             {
-                                icon: 'icon-edit',
+                                icon: 'glyphicon glyphicon-edit',
                                 label: instance.getString(EDIT),
                                 on: {
                                     click: A.bind(instance._handleEditEvent, instance)
