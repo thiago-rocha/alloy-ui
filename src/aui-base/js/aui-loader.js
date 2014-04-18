@@ -49,6 +49,17 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-component"
         ]
     },
+    "aui-alert": {
+        "requires": [
+            "timers",
+            "widget",
+            "widget-stdmod",
+            "aui-classnamemanager",
+            "aui-widget-cssclass",
+            "aui-widget-transition"
+        ],
+        "skinnable": true
+    },
     "aui-aria": {
         "requires": [
             "plugin",
@@ -1126,4 +1137,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'f0162df5bc417799d6b77cf0e1b8bf4b';
+YUI.Env[Y.version].md5 = '827d36c4a43a9ff0fb03fd811f7e229b';
