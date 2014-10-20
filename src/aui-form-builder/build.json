@@ -25,6 +25,12 @@
             ]
         },
 
+        "aui-form-builder-field-grid": {
+            "jsfiles": [
+                "js/aui-form-builder-field-grid.js"
+            ]
+        },
+
         "aui-form-builder-field-sentence": {
             "jsfiles": [
                 "js/aui-form-builder-field-sentence.js"
