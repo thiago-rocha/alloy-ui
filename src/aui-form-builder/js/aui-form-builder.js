@@ -145,6 +145,8 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
             boundingBox.one('.' + CSS_HEADER_BACK).on('click', this._onClickHeaderBack, this),
             this._menu.after('itemSelected', A.bind(this._afterItemSelected, this))
         ];
+
+        this._updateUniqueFieldType();
     },
 
     /**
@@ -368,6 +370,8 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
 
         event.prevVal.removeTarget(this);
         event.newVal.addTarget(this);
+
+        this._updateUniqueFieldType();
     },
 
     /**
@@ -378,6 +382,8 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
      */
     _afterLayoutColsChange: function() {
         this._renderEmptyColumns();
+
+        this._updateUniqueFieldType();
     },
 
     /**
@@ -410,6 +416,8 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
     _afterLayoutRowsChange: function() {
         this._syncLayoutRows();
         this._updatePageBreaks();
+
+        this._updateUniqueFieldType();
     },
 
     /**
@@ -455,6 +463,67 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
      */
     _getNumberOfPageBreaks: function() {
         return this.get('contentBox').all('.form-builder-page-break').size();
+    },
+
+    /**
+     * Check all Field created if there is a someone of the same type
+     * of the parameter.
+     *
+     * @method _hasFieldType
+     * @param {Object} fieldType
+     * @return {Boolean}
+     * @protected
+     */
+    _hasFieldType: function(fieldType) {
+        var col,
+            cols,
+            field,
+            row,
+            rows = this.get('layout').get('rows');
+
+        for (row = 0; row < rows.length; row++) {
+            cols = rows[row].get('cols');
+            for (col = 0; col < cols.length; col++) {
+                field = cols[col].get('value');
+                if (field && (field instanceof A.FormBuilderFieldBase)) {
+                    if (field.constructor === fieldType.get('fieldClass')) {
+                        return true;
+                    }
+                    else if (this._hasFieldTypeOnNested(fieldType.get('fieldClass'), field)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    },
+
+    /**
+     * Check all nested Field created if there is a someone of the same
+     * type of the parameter.
+     * @param  {A.FormBuilderFieldType} fieldTypeClass
+     * @param  {A.FormBuilderFieldBase} field
+     * @return {Boolean}
+     * @protected
+     */
+    _hasFieldTypeOnNested: function(fieldTypeClass, field) {
+        var nestedFields = field.get('nestedFields');
+
+        if (!nestedFields) {
+            return false;
+        }
+
+        for (var i = 0; i < nestedFields.length; i++) {
+            if (nestedFields[i].constructor === fieldTypeClass) {
+                return true;
+            }
+            else if (this._hasFieldTypeOnNested(fieldTypeClass, nestedFields[i])) {
+                return true;
+            }
+        }
+
+        return false;
     },
 
     /**
@@ -636,6 +705,9 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
             col = event.currentTarget.ancestor('.col').getData('layout-col');
             this._makeColumnEmpty(col);
         }
+
+        this._updateUniqueFieldType();
+
     },
 
     /**
@@ -850,6 +922,22 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [A.FormBuilderLayoutBui
                 pageBreak.set('index', index++);
                 pageBreak.set('quantity', quantity);
             }
+        });
+    },
+
+    /**
+     * Enable or disable unique FieldTypes based on created Fields. 
+     *
+     * @method _updateUniqueFieldType
+     * @protected
+     */
+    _updateUniqueFieldType: function() {
+        var instance = this;
+
+        A.Array.each(instance.get('fieldTypes'), function (fieldType) {
+            if (fieldType.get('unique')) {
+                fieldType.set('disabled', instance._hasFieldType(fieldType));
+            } 
         });
     }
 }, {
