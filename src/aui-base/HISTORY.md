@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-1758](https://issues.liferay.com/browse/AUI-1758) LayoutBuilder should allow all breakpoints and should not have a min width
 * [AUI-1650](https://issues.liferay.com/browse/AUI-1650) Surface reloads infinitely on android's mobile browser
 * [AUI-1569](https://issues.liferay.com/browse/AUI-1569) Create unit test for uncamelize
 * [AUI-1576](https://issues.liferay.com/browse/AUI-1576) A.Lang.String.Uncamelize method drops letters from the string
