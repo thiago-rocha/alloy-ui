@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-1813](https://issues.liferay.com/browse/AUI-1813) Show asterisk beside required fields title
 * [AUI-1785](https://issues.liferay.com/browse/AUI-1785) Merge list and choice fields into a single field type
 * [AUI-1794](https://issues.liferay.com/browse/AUI-1794) Refactor the rendering logic of each field into a render function
 * [AUI-1750](https://issues.liferay.com/browse/AUI-1750) Create time field
