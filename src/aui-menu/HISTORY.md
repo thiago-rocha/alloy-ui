@@ -4,4 +4,5 @@
 
 ## @VERSION@
 
+* [AUI-1820](https://issues.liferay.com/browse/AUI-1820) Form Builder is not keyboard-accessible
 * [AUI-1526](https://issues.liferay.com/browse/AUI-1526) Create a menu module
