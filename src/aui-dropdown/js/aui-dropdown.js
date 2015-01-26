@@ -43,6 +43,15 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
     _hideOnClickOutsideHandle: null,
 
     /**
+     * Holds the event handle for the `keypress` event.
+     *
+     * @property _toggleContentOnKeypress
+     * @type {EventHandle}
+     * @protected
+     */
+     _toggleContentOnKeypress: null,
+
+    /**
      * Construction logic executed during Dropdown instantiation. Lifecycle.
      *
      * @method initializer
@@ -64,8 +73,11 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
         this.after({
             hideOnClickOutSideChange: this._afterHideOnClickOutsideChange,
             hideOnEscChange: this._afterHideOnEscChange,
-            openChange: this._afterOpenChange
+            openChange: this._afterOpenChange,
+            triggerChange: this._afterDropdownTriggerChange
         });
+
+        this._dropdownUiSetTrigger(this.get('trigger'));
     },
 
     /**
@@ -125,6 +137,21 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
     },
 
     /**
+     * Fires after `trigger` attribute change.
+     *
+     * @method _afterDropdownTriggerChange
+     * @param {EventFacade} event
+     * @protected
+     */
+    _afterDropdownTriggerChange: function(event) {
+        if (event.prevVal) {
+            this._toggleContentOnKeypress.detach();
+        }
+
+        this._dropdownUiSetTrigger(event.newVal);
+    },
+
+    /**
      * Fires after `hideOnClickOutside` attribute change.
      *
      * @method _afterHideOnClickOutsideChange
@@ -158,6 +185,19 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
     },
 
     /**
+     * Attachs keypress event to trigger.
+     *
+     * @method _dropdownUiSetTrigger
+     * @param {Node} trigger
+     * @protected
+     */
+    _dropdownUiSetTrigger: function(trigger) {
+        if (trigger) {
+            this._toggleContentOnKeypress = trigger.on('keypress', A.bind(this._onDropdownKeyPressMenu, this), 'enter');
+        }
+    },
+
+    /**
      * Fires when a click out of dropdown boundingBox.
      *
      * @method _onClickOutside
@@ -178,6 +218,16 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
      */
     _onEscKey: function() {
         this.close();
+    },
+
+    /**
+     * Fired when bounding box is key pressed.
+     *
+     * @method _onDropdownKeyPressMenu
+     * @protected
+     */
+    _onDropdownKeyPressMenu: function() {
+        this.toggleContent();
     },
 
     /**
