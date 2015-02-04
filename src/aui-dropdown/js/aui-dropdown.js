@@ -193,7 +193,7 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
      */
     _dropdownUiSetTrigger: function(trigger) {
         if (trigger) {
-            this._toggleContentOnKeypress = trigger.on('keypress', A.bind(this._onDropdownKeyPressMenu, this), 'enter');
+            this._toggleContentOnKeypress = trigger.on('key', A.bind(this._onDropdownKeyPressMenu, this), 'press:13');
         }
     },
 
@@ -224,10 +224,12 @@ A.Dropdown = A.Base.create('dropdown', A.Widget, [
      * Fired when bounding box is key pressed.
      *
      * @method _onDropdownKeyPressMenu
+     * @param {EventFacade} event
      * @protected
      */
-    _onDropdownKeyPressMenu: function() {
+    _onDropdownKeyPressMenu: function(event) {
         this.toggleContent();
+        event.preventDefault();
     },
 
     /**
