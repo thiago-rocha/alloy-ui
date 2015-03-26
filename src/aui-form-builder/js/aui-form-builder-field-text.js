@@ -58,11 +58,20 @@ A.FormBuilderFieldText = A.Base.create('form-builder-field-text', A.FormFieldTex
                 })
             },
             {
-            attrName: 'placeholder',
-            editor: new A.TextDataEditor({
-                label: 'Placeholder'
-            })
-        }
+                attrName: 'placeholder',
+                editor: new A.TextDataEditor({
+                    label: 'Placeholder'
+                })
+            },
+            {
+               attrName: 'validator',
+               editor: new A.ValidatorDataEditor(
+                   {
+                        label: 'Validator',
+                        type: 'Text'
+                   }
+               )
+           }
         );
     }
 });

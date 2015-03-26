@@ -154,6 +154,17 @@ A.FormFieldText = A.Base.create('form-field-text', A.FormField, [A.FormFieldRequ
         type: {
             validator: A.Lang.isNumber,
             value: 0
+        },
+
+        /**
+         * Validator attribute.
+         *
+         * @attribute validator
+         * @default []
+         * @type {Array}
+         */
+        validator: {
+            value: []
         }
     }
 });
