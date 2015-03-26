@@ -8,7 +8,7 @@
     <script src="../../build/aui/aui.js"></script>
 </head>
 <body class="yui3-skin-sam">
-<h1>Data Editors Demo</h1>
+<!-- <h1>Data Editors Demo</h1>
 
 <h2>Options Editor</h2>
 <div id="optionsEditor"></div>
@@ -21,7 +21,10 @@
 <div id="tabsEditor"></div>
 <div id="weaponsPanel">Out of weapons</div>
 <div id="armorPanel">Out of armor</div>
-<div id="accessoriesPanel">Out of accessories</div>
+<div id="accessoriesPanel">Out of accessories</div> -->
+
+<h2>Validator Editor</h2>
+<div id="validatorEditor"></div>
 
 <script type="text/javascript" charset="utf-8">
 YUI({ filter:'raw' }).use(
@@ -29,45 +32,84 @@ YUI({ filter:'raw' }).use(
     'aui-options-data-editor',
     'aui-radio-group-data-editor',
     'aui-tabs-data-editor',
+    'aui-validator-data-editor',
     function(Y) {
-        var optionsEditor = new Y.OptionsDataEditor({
-            editedValue: ['Drogon', 'Visirion', 'Rhaegal'],
-            originalValue: ['Drogon', 'Visirion', 'Rhaegal']
-        });
-        Y.one('#optionsEditor').append(optionsEditor.get('node'));
-        Y.one('#optionsEditorValue').on('click', function() {
-            console.log(optionsEditor.get('editedValue'));
-        });
+        // var optionsEditor = new Y.OptionsDataEditor({
+        //     editedValue: ['Drogon', 'Visirion', 'Rhaegal'],
+        //     originalValue: ['Drogon', 'Visirion', 'Rhaegal']
+        // });
+        // Y.one('#optionsEditor').append(optionsEditor.get('node'));
+        // Y.one('#optionsEditorValue').on('click', function() {
+        //     console.log(optionsEditor.get('editedValue'));
+        // });
 
-        var radioGroupEditor = new Y.RadioGroupDataEditor({
-            editedValue: 2,
-            originalValue: 2,
-            radioLabels: ['Squirtle', 'Charmander', 'Bulbasaur']
-        });
-        Y.one('#radioGroupEditor').append(radioGroupEditor.get('node'));
+        // var radioGroupEditor = new Y.RadioGroupDataEditor({
+        //     editedValue: 2,
+        //     originalValue: 2,
+        //     radioLabels: ['Squirtle', 'Charmander', 'Bulbasaur']
+        // });
+        // Y.one('#radioGroupEditor').append(radioGroupEditor.get('node'));
 
-        var tabsEditor = new Y.TabsDataEditor({
-            editedValue: 'inventory-armor',
-            originalValue: 'inventory-armor',
-            tabs: [
+        // var tabsEditor = new Y.TabsDataEditor({
+        //     editedValue: 'inventory-armor',
+        //     originalValue: 'inventory-armor',
+        //     tabs: [
+        //         {
+        //             label: 'Weapons',
+        //             panelNode: Y.one('#weaponsPanel'),
+        //             value: 'inventory-weapon'
+        //         },
+        //         {
+        //             label: 'Armor',
+        //             panelNode: Y.one('#armorPanel'),
+        //             value: 'inventory-armor'
+        //         },
+        //         {
+        //             label: 'Accessories',
+        //             panelNode: Y.one('#accessoriesPanel'),
+        //             value: 'inventory-accessory'
+        //         }
+        //     ]
+        // });
+        // Y.one('#tabsEditor').append(tabsEditor.get('node'));
+        var validatorEditor = new Y.ValidatorDataEditor({
+            editedValue: [
                 {
-                    label: 'Weapons',
-                    panelNode: Y.one('#weaponsPanel'),
-                    value: 'inventory-weapon'
+                    type: 'contains',
+                    value: 'Y',
+                    error: {
+                        type: 'info',
+                        value: 'I'
+                    }
                 },
                 {
-                    label: 'Armor',
-                    panelNode: Y.one('#armorPanel'),
-                    value: 'inventory-armor'
+                    type: 'doesNotContains',
+                    value: 'YY',
+                    error: {
+                        type: 'error',
+                        value: 'E'}}
+            ],
+            originalValue: [
+                {
+                    type: 'contains',
+                    value: 'X',
+                    error: {
+                        type: 'info',
+                        value: 'E'
+                    }
                 },
                 {
-                    label: 'Accessories',
-                    panelNode: Y.one('#accessoriesPanel'),
-                    value: 'inventory-accessory'
+                    type: 'doesNotContains',
+                    value: 'YY',
+                    error: {
+                        type: 'error',
+                        value: 'E'
+                    }
                 }
-            ]
+            ],
+            type: 'Text'
         });
-        Y.one('#tabsEditor').append(tabsEditor.get('node'));
+        Y.one('#validatorEditor').append(validatorEditor.get('node'));
     }
 );
 </script>

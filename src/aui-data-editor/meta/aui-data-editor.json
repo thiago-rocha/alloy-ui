@@ -49,5 +49,10 @@
             "aui-data-editor",
             "event-valuechange"
         ]
+    },
+    "aui-validator-data-editor": {
+        "requires": [
+            "aui-data-editor"
+        ]
     }
 }
