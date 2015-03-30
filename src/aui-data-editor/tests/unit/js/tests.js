@@ -80,6 +80,16 @@ YUI.add('aui-data-editor-tests', function(Y) {
 
             editor.set('visible', true);
             Y.Assert.areNotEqual('none', editor.get('node').getStyle('display'));
+        },
+
+        'should check if data-editor has prepareContent function': function() {
+            var editor,
+                TestEditor = this._createTestEditorClass();
+
+            editor = new TestEditor();
+
+            editor.prepareContent();
+            Y.Assert.areEqual('function', typeof editor.prepareContent);
         }
     }));
 
