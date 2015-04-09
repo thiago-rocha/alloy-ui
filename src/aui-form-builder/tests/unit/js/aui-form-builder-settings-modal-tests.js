@@ -206,12 +206,36 @@ YUI.add('aui-form-builder-settings-modal-tests', function(Y) {
             node.one('.form-builder-field-settings-save').simulate('mousemove');
             node.one('.form-builder-field-settings-save').simulate('click');
             Y.Assert.areNotEqual('none', node.getStyle('display'));
+        },
+
+        'should enable save button only on content status ready': function() {
+            var field = new Y.FormBuilderFieldMedia(),
+                instance = this,
+                node;
+
+            this._modal.show(field, 'Media');
+
+            node = Y.one('.form-builder-field-settings');
+
+            Y.one('.image-url-data-editor-input-url').set('value', 'assets/lfr-soccer-6.jpg');
+            Y.Assert.isFalse(Y.one('.form-builder-field-settings-save').hasClass('disabled'));
+
+            instance._simulateInputChange(Y.one('.image-url-data-editor-input-url'), 'assets/lfr-soccer-7.jpg', function() {
+                field.on('status', function() {
+                    instance.resume(function() {
+                        Y.Assert.isFalse(Y.one('.form-builder-field-settings-save').hasClass('disabled'));
+                    });
+                });
+                instance.wait();
+            });
         }
+
     }));
 
     Y.Test.Runner.add(suite);
 }, '', {
     requires: [
+        'aui-form-builder-field-media',
         'aui-form-builder-settings-modal',
         'aui-form-builder-field-text',
         'node-event-simulate',

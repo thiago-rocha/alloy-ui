@@ -104,15 +104,14 @@ A.FormFieldMedia = A.Base.create('form-field-media', A.FormField, [A.FormFieldRe
      * @static
      */
     ATTRS: {
-        /**
-         * Id to reference form data after a form is submitted.
+    	/**
+         * Copyright/Source/Subtitle from the used image.
          *
-         * @attribute name
+         * @attribute imageInfo
          * @default ''
          * @type String
          */
-        name: {
-            validator: A.Lang.isString,
+        imageInfo: {
             value: ''
         },
 
@@ -128,13 +127,14 @@ A.FormFieldMedia = A.Base.create('form-field-media', A.FormField, [A.FormFieldRe
         },
 
         /**
-         * Copyright/Source/Subtitle from the used image.
+         * Id to reference form data after a form is submitted.
          *
-         * @attribute imageInfo
+         * @attribute name
          * @default ''
          * @type String
          */
-        imageInfo: {
+        name: {
+            validator: A.Lang.isString,
             value: ''
         }
     }

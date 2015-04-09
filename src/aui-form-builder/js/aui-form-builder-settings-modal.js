@@ -86,7 +86,9 @@ A.FormBuilderSettingsModal = A.Base.create('form-builder-settings-modal', A.Base
             this._eventToggleAdvancedContent.detach();
         }
 
-        this._fieldBeingEdited.detach('click', A.bind(this._disableSaveButton, this));
+        if (this._fieldBeingEdited) {
+            this._fieldBeingEdited.detach('click', A.bind(this._disableSaveButton, this));
+        }
     },
 
     /**
@@ -135,8 +137,9 @@ A.FormBuilderSettingsModal = A.Base.create('form-builder-settings-modal', A.Base
         var saveButton = this._modal.get('boundingBox').one('.' + CSS_FIELD_SETTINGS_SAVE);
 
         if (!event.ready) {
-                saveButton.addClass('disabled');
-        } else {
+            saveButton.addClass('disabled');
+        }
+        else {
             saveButton.removeClass('disabled');
         }
     },
