@@ -600,7 +600,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-form-builder-field-type",
             "aui-form-builder-field-types",
             "aui-form-builder-layout-builder",
-            "aui-form-builder-page-break-row",
+            "aui-form-builder-pages",
             "aui-form-builder-settings-modal",
             "aui-menu",
             "event-focus",
@@ -675,14 +675,13 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "aui-form-builder-page-break-row": {
+    "aui-form-builder-pages": {
         "requires": [
             "aui-classnamemanager",
-            "aui-layout-col",
-            "aui-layout-row",
+            "aui-form-builder-layout-builder",
+            "aui-layout",
+            "aui-pagination",
             "base",
-            "event-focus",
-            "event-valuechange",
             "node-base"
         ],
         "skinnable": true
@@ -1652,4 +1651,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '8ff12484de67ceffa5e38d7f415b5bfe';
+YUI.Env[Y.version].md5 = '09174e7ff0125e315391c7d55df3e152';

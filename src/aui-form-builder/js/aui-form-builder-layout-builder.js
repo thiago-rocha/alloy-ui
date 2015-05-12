@@ -5,9 +5,7 @@
  * @submodule aui-form-builder-layout-builder
  */
 
-var CSS_ADD_PAGE_BREAK = A.getClassName('form', 'builder', 'add', 'page', 'break'),
-    CSS_ADD_ROW_COLLAPSED = A.getClassName('form', 'builder', 'add', 'row', 'collapsed'),
-    CSS_CHOOSE_COL_MOVE = A.getClassName('form', 'builder', 'choose', 'col', 'move'),
+var CSS_CHOOSE_COL_MOVE = A.getClassName('form', 'builder', 'choose', 'col', 'move'),
     CSS_CHOOSE_COL_MOVE_TARGET = A.getClassName('form', 'builder', 'choose', 'col', 'move', 'target'),
     CSS_FIELD = A.getClassName('form', 'builder', 'field'),
     CSS_FIELD_MOVE_BUTTON = A.getClassName('form', 'builder', 'field', 'move', 'button'),
@@ -16,10 +14,7 @@ var CSS_ADD_PAGE_BREAK = A.getClassName('form', 'builder', 'add', 'page', 'break
     CSS_FIELD_MOVING = A.getClassName('form', 'builder', 'field', 'moving'),
     CSS_LAYOUT = A.getClassName('form', 'builder', 'layout'),
     CSS_LAYOUT_BUILDER_MOVE_CANCEL = A.getClassName('layout', 'builder', 'move', 'cancel'),
-    CSS_LAYOUT_MODE = A.getClassName('form', 'builder', 'layout', 'mode'),
-    CSS_PAGE_BREAK_ROW_COLLAPSED = A.getClassName('form', 'builder', 'page', 'break', 'row', 'collapsed'),
-
-    SELECTOR_LAYOUT_BUILDER_ADD_ROW_CHOOSE_ROW = '.layout-builder-add-row-choose-row';
+    CSS_LAYOUT_MODE = A.getClassName('form', 'builder', 'layout', 'mode');
 
 /**
  * `A.FormBuilder` extension, which handles the `A.LayoutBuilder` inside it.
@@ -103,16 +98,6 @@ A.FormBuilderLayoutBuilder.prototype = {
     },
 
     /**
-     * Fired after the `layout:isColumnMode` attribute changes.
-     *
-     * @method _afterLayoutBuilderIsColumnModeChange
-     * @protected
-     */
-    _afterLayoutBuilderIsColumnModeChange: function() {
-        this._setPositionForPageBreakButton();
-    },
-
-    /**
      * Fired after the `layout` attribute is set.
      *
      * @method _afterLayoutBuilderLayoutChange
@@ -120,7 +105,7 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _afterLayoutBuilderLayoutChange: function() {
         if (this._layoutBuilder) {
-            this._layoutBuilder.set('layout', this.get('layout'));
+            this._layoutBuilder.set('layout', this.get('layouts')[this._getActiveLayoutIndex()]);
         }
     },
 
@@ -131,7 +116,7 @@ A.FormBuilderLayoutBuilder.prototype = {
      * @protected
      */
     _afterLayoutBuilderModeChange: function() {
-        var layout = this.get('layout');
+        var layout = this.get('layouts')[this._getActiveLayoutIndex()];
 
         this._uiSetLayoutBuilderMode(this.get('mode'));
         layout.normalizeColsHeight(layout.get('node').all('.row'));
@@ -151,7 +136,7 @@ A.FormBuilderLayoutBuilder.prototype = {
             addColMoveTarget: A.bind(this._addColMoveTarget, this),
             clickColMoveTarget: A.bind(this._clickColMoveTarget, this),
             container: this.get('contentBox').one('.' + CSS_LAYOUT),
-            layout: this.get('layout'),
+            layout: this.get('layouts')[this._getActiveLayoutIndex()],
             removeColMoveButtons: A.bind(this._removeColMoveButtons, this),
             removeColMoveTargets: A.bind(this._removeColMoveTargets, this)
         });
@@ -162,7 +147,6 @@ A.FormBuilderLayoutBuilder.prototype = {
         this._uiSetLayoutBuilderMode(this.get('mode'));
 
         this._layoutBuilder.get('layout').after('isColumnModeChange', A.bind(this._afterLayoutBuilderIsColumnModeChange, this));
-        this._setPositionForPageBreakButton();
 
         this._eventHandles.push(
             this._fieldToolbar.on('onToolbarFieldMouseEnter', A.bind(this._onFormBuilderToolbarFieldMouseEnter, this))
@@ -223,7 +207,7 @@ A.FormBuilderLayoutBuilder.prototype = {
         if (parentFieldNode) {
             parentFieldNode.getData('field-instance').removeNestedField(this._fieldBeingMoved);
 
-            this.get('layout').normalizeColsHeight(new A.NodeList(this.getFieldRow(parentFieldNode.getData('field-instance'))));
+            this.get('layouts')[this._getActiveLayoutIndex()].normalizeColsHeight(new A.NodeList(this.getFieldRow(parentFieldNode.getData('field-instance'))));
         }
         else {
             this._fieldBeingMovedCol.set('value', null);
@@ -242,22 +226,6 @@ A.FormBuilderLayoutBuilder.prototype = {
 
         this._layoutBuilder.cancelMove();
         this._removeLayoutCutColButtons();
-    },
-
-    /**
-     * Put add page break button together with add row button.
-     *
-     * @method _collapseAddPageBreakButton
-     * @param {Node} addPageBreakButton
-     * @param {Node} addRowContainer
-     * @protected
-     */
-    _collapseAddPageBreakButton: function(addPageBreakButton, addRowContainer) {
-        var addRowButton = addRowContainer.one(SELECTOR_LAYOUT_BUILDER_ADD_ROW_CHOOSE_ROW);
-
-        addPageBreakButton.addClass(CSS_PAGE_BREAK_ROW_COLLAPSED);
-        addRowButton.addClass(CSS_ADD_ROW_COLLAPSED);
-        addRowContainer.append(addPageBreakButton);
     },
 
     /**
@@ -291,24 +259,11 @@ A.FormBuilderLayoutBuilder.prototype = {
                 enableMoveCols: true,
                 enableMoveRows: false,
                 enableRemoveCols: false,
-                enableRemoveRows: false,
+                enableRemoveRows: false
             });
         }
 
         this._updateHeaderTitle(this.TITLE_REGULAR);
-    },
-
-    /**
-     * Appends add page break button on content box.
-     *
-     * @method _expandAddPageBreakButton
-     * @param {Node} addPageBreakButton
-     * @param {Node} contentBox
-     * @protected
-     */
-    _expandAddPageBreakButton: function(addPageBreakButton, contentBox) {
-        addPageBreakButton.removeClass(CSS_PAGE_BREAK_ROW_COLLAPSED);
-        contentBox.append(addPageBreakButton);
     },
 
     /**
@@ -354,29 +309,6 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _removeLayoutCutColButtons: function() {
         this._layoutBuilder.get('removeColMoveButtons')();
-    },
-
-    /**
-     * Sets the proper position for page break button.
-     *
-     * @method _setPositionForPageBreakButton
-     * @protected
-     */
-    _setPositionForPageBreakButton: function() {
-        var addPageBreakButton,
-            addRowContainer,
-            contentBox = this.get('contentBox'),
-            isColumnMode = this._layoutBuilder.get('layout').get('isColumnMode');
-
-        addPageBreakButton = contentBox.one('.' + CSS_ADD_PAGE_BREAK);
-        addRowContainer = this._layoutBuilder.addRowArea;
-
-        if (isColumnMode) {
-            this._collapseAddPageBreakButton(addPageBreakButton, addRowContainer);
-        }
-        else {
-            this._expandAddPageBreakButton(addPageBreakButton, contentBox);
-        }
     },
 
     /**
