@@ -836,6 +836,7 @@
     "aui-layout": {
         "requires": [
             "aui-layout-col",
+            "aui-layout-page",
             "aui-layout-row",
             "aui-node-base",
             "base-build",
@@ -907,6 +908,14 @@
         "skinnable": true
     },
     "aui-layout-col": {
+        "requires": [
+            "aui-classnamemanager",
+            "aui-node-base",
+            "base-build"
+        ],
+        "skinnable": true
+    },
+    "aui-layout-page": {
         "requires": [
             "aui-classnamemanager",
             "aui-node-base",

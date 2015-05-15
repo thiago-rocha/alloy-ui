@@ -18,19 +18,21 @@ YUI.add('aui-form-builder-field-types-tests', function(Y) {
                     }
                 ],
                 layout: new Y.Layout({
-                    rows: [
-                        new Y.LayoutRow({
-                            cols: [
-                                new Y.LayoutCol({
-                                    size: 6,
-                                    value: new Y.FormBuilderFieldText({
-                                        help: 'Help',
-                                        title: 'Title'
+                    pages: [{
+                        rows: [
+                            new Y.LayoutRow({
+                                cols: [
+                                    new Y.LayoutCol({
+                                        size: 6,
+                                        value: new Y.FormBuilderFieldText({
+                                            help: 'Help',
+                                            title: 'Title'
+                                        })
                                     })
-                                })
-                            ]
-                        })
-                    ]
+                                ]
+                            })
+                        ]
+                    }]
                 })
             }, config)).render('#container');
         },
@@ -320,44 +322,46 @@ YUI.add('aui-form-builder-field-types-tests', function(Y) {
                     unique: true
                 }],
                 layout: new Y.Layout({
-                    rows: [
-                        new Y.LayoutRow({
-                            cols: [
-                                new Y.LayoutCol({
-                                    size: 6,
-                                    value: new Y.FormBuilderFieldText({
-                                        help: 'Help',
-                                        nestedFields: [
-                                            new Y.FormBuilderFieldText({
-                                                help: 'Help',
-                                                title: 'Title'
-                                            })
-                                        ],
-                                        title: 'Title'
+                    pages: [{
+                        rows: [
+                            new Y.LayoutRow({
+                                cols: [
+                                    new Y.LayoutCol({
+                                        size: 6,
+                                        value: new Y.FormBuilderFieldText({
+                                            help: 'Help',
+                                            nestedFields: [
+                                                new Y.FormBuilderFieldText({
+                                                    help: 'Help',
+                                                    title: 'Title'
+                                                })
+                                            ],
+                                            title: 'Title'
+                                        })
+                                    }),
+                                    new Y.LayoutCol({
+                                        size: 6,
+                                        value: new Y.FormBuilderFieldText({
+                                            help: 'Help',
+                                            nestedFields: [
+                                                new Y.FormBuilderFieldText({
+                                                    help: 'Help',
+                                                    nestedFields: [
+                                                        new Y.FormBuilderFieldSentence({
+                                                            help: 'Help',
+                                                            title: 'Title'
+                                                        })
+                                                    ],
+                                                    title: 'Title'
+                                                })
+                                            ],
+                                            title: 'Title'
+                                        })
                                     })
-                                }),
-                                new Y.LayoutCol({
-                                    size: 6,
-                                    value: new Y.FormBuilderFieldText({
-                                        help: 'Help',
-                                        nestedFields: [
-                                            new Y.FormBuilderFieldText({
-                                                help: 'Help',
-                                                nestedFields: [
-                                                    new Y.FormBuilderFieldSentence({
-                                                        help: 'Help',
-                                                        title: 'Title'
-                                                    })
-                                                ],
-                                                title: 'Title'
-                                            })
-                                        ],
-                                        title: 'Title'
-                                    })
-                                })
-                            ]
-                        })
-                    ]
+                                ]
+                            })
+                        ]
+                    }]
                 })
             });
             this._formBuilder.showFieldsPanel();
@@ -378,19 +382,21 @@ YUI.add('aui-form-builder-field-types-tests', function(Y) {
             });
 
             this._formBuilder.set('layout', new Y.Layout({
-                rows: [
-                    new Y.LayoutRow({
-                        cols: [
-                            new Y.LayoutCol({
-                                size: 6,
-                                value: new Y.FormBuilderFieldSentence({
-                                    help: 'Help',
-                                    title: 'Title'
+                pages: [{
+                    rows: [
+                        new Y.LayoutRow({
+                            cols: [
+                                new Y.LayoutCol({
+                                    size: 6,
+                                    value: new Y.FormBuilderFieldSentence({
+                                        help: 'Help',
+                                        title: 'Title'
+                                    })
                                 })
-                            })
-                        ]
-                    })
-                ]
+                            ]
+                        })
+                    ]
+                }]
             }));
             this._formBuilder.showFieldsPanel();
             Y.Assert.isTrue(Y.one('.field-type').hasClass('field-type-disabled'));

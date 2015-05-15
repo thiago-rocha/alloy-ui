@@ -84,7 +84,8 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
 
         this._eventHandles = [
             this.after('layoutChange', this._afterLayoutChange),
-            this.after('layout:rowsChange', this._afterLayoutRowsChange),
+            this.after('layout:pagesChange', this._afterLayoutPagesChange),
+            this.after('layout-page:rowsChange', this._afterLayoutRowsChange),
             this.after('layout-row:colsChange', this._afterLayoutColsChange),
             this.after('layout-col:valueChange', this._afterLayoutColValueChange)
         ];
@@ -97,6 +98,8 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
      * @protected
      */
     renderUI: function() {
+        var layoutPages = this.get('layout').get('pages');
+
         this._menuEditLayoutItem = new A.MenuItem({
             content: this.TPL_EDIT_LAYOUT_BUTTON
         });
@@ -109,12 +112,13 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
         }).render();
 
         this._pages = new A.FormBuilderPages({
-            pageHeader: '.' + CSS_PAGE_HEADER,
             contentBox: '.' + CSS_PAGES,
-            pagesQuantity: this.get('layouts').length
+            pagesQuantity: layoutPages.length
         }).render();
 
-        this.get('layouts')[this._getActiveLayoutIndex()].addTarget(this);
+        if (layoutPages.length) {
+            this.getActivePage().addTarget(this);
+        }
     },
 
     /**
@@ -136,9 +140,9 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
             A.getDoc().on('key', this._onEscKey, 'esc', this)
         );
 
-        this._pages.on('add', A.bind(this._addLayout, this));
+        this._pages.on('add', A.bind(this._addPage, this));
         this._pages.on('remove', A.bind(this._removeLayout, this));
-        this._pages.after('activeIndexPageChange', A.bind(this._afterActiveIndexPageChange, this));
+        this._pages.after('activePageNumberChange', A.bind(this._afterActivePageNumberChange, this));
     },
 
     /**
@@ -191,6 +195,16 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
+     * Returns the active `LayoutPage`.
+     *
+     * @method getActivePage
+     * @return {A.LayoutPage}
+     */
+    getActivePage: function() {
+        return this.get('layout').get('pages')[this._getActivePageIndex()];
+    },
+
+    /**
      * Returns the `fieldInstance`'s row.
      *
      * @method getFieldRow
@@ -217,7 +231,7 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
         if (nestedFieldsNode) {
             parentField = nestedFieldsNode.ancestor('.form-builder-field').getData('field-instance');
             parentField.removeNestedField(field);
-            this.get('layouts')[this._getActiveLayoutIndex()].normalizeColsHeight(new A.NodeList(this.getFieldRow(parentField)));
+            this.getActivePage().normalizeColsHeight(new A.NodeList(this.getFieldRow(parentField)));
         }
         else {
             col = field.get('content').ancestor('.col').getData('layout-col');
@@ -245,19 +259,19 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
-     * 
      *
-     * @method _addLayout
+     *
+     * @method _addPage
      * @protected
      */
-    _addLayout: function() {
-        var newLayout = new A.Layout({
+    _addPage: function() {
+        var newPage = new A.LayoutPage({
             rows: [
                 new A.LayoutRow()
             ]
         });
 
-        this.get('layouts').push(newLayout);
+        this.get('layout').get('pages').push(newPage);
     },
 
     /**
@@ -271,7 +285,7 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
      */
     _addNestedField: function(field, nested, index) {
         field.addNestedField(index, nested);
-        this.get('layouts')[this._getActiveLayoutIndex()].normalizeColsHeight(new A.NodeList(this.getFieldRow(nested)));
+        this.getActivePage().normalizeColsHeight(new A.NodeList(this.getFieldRow(nested)));
     },
 
     /**
@@ -309,7 +323,7 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
         }
         else {
             this._handleEditEvent(field);
-            this.get('layouts')[this._getActiveLayoutIndex()].normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
+            this.getActivePage().normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
         }
 
         this._handleCreateEvent(field);
@@ -394,12 +408,12 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
     /**
      * Fire event of create a field.
      *
-     * @method _getActiveLayoutIndex
+     * @method _getActivePageIndex
      * @param {A.FormBuilderFieldBase} field
      * @protected
      */
-    _getActiveLayoutIndex: function() {
-        return this._pages.get('activeIndexPage');
+    _getActivePageIndex: function() {
+        return this._pages.get('activePageNumber') - 1;
     },
 
     /**
@@ -444,16 +458,13 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
     /**
      *
      *
-     * @method _afterActiveIndexPageChange
+     * @method _afterActivePageNumberChange
      * @protected
      */
-    _afterActiveIndexPageChange: function(event) {
-        var activeLayout = this.get('layouts')[event.newVal];
+    _afterActivePageNumberChange: function(event) {
+        var activePage = this.get('layout').get('pages')[event.newVal - 1];
 
-        this._layoutBuilder.get('layout').removeTarget(this);
-        activeLayout.addTarget(this);
-        this._layoutBuilder.set('layout', activeLayout);
-        this._syncLayoutRows();
+        // this._syncActivePage();
     },
 
     /**
@@ -559,16 +570,17 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
-     * 
+     *
      *
      * @method _removeLayout
      * @protected
      */
     _removeLayout: function(event) {
-        var layout = this.get('layouts');
+        var layout = this.get('layout'),
+            pages = layout.get('pages');
 
-        layout[event.removedIndex].destroy();
-        layout.splice(event.removedIndex, 1);
+        pages[event.removedIndex].destroy();
+        pages.splice(event.removedIndex, 1);
     },
 
     /**
@@ -579,15 +591,17 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
      */
     _renderEmptyColumns: function() {
         var instance = this,
-            rows = this.get('layouts')[this._getActiveLayoutIndex()].get('rows');
+            page = this.getActivePage();
 
-        A.Array.each(rows, function(row) {
-            A.Array.each(row.get('cols'), function(col) {
-                if (!col.get('value')) {
-                    instance._makeColumnEmpty(col);
-                }
+        if (page) {
+            A.Array.each(page.get('rows'), function(row) {
+                A.Array.each(row.get('cols'), function(col) {
+                    if (!col.get('value')) {
+                        instance._makeColumnEmpty(col);
+                    }
+                });
             });
-        });
+        }
     },
 
     /**
@@ -630,7 +644,7 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
      * @protected
      */
     _syncLayoutRows: function() {
-        var layout = this.get('layouts')[this._getActiveLayoutIndex()];
+        var layout = this.getActivePage();
 
         this._renderEmptyColumns();
     },
@@ -677,7 +691,7 @@ A.FormBuilder  = A.Base.create('form-builder', A.Widget, [
          * @attribute layout
          * @type Array
          */
-        layouts: {
+        layout: {
             value: []
         },
 

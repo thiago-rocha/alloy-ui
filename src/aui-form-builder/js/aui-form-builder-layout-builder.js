@@ -112,24 +112,14 @@ A.FormBuilderLayoutBuilder.prototype = {
     },
 
     /**
-     * Fired after the `layout:isColumnMode` attribute changes.
-     *
-     * @method _afterLayoutBuilderIsColumnModeChange
-     * @protected
-     */
-    _afterLayoutBuilderIsColumnModeChange: function() {
-        this._setPositionForPageBreakButton();
-    },
-
-    /**
      * Fired after the `layout` attribute is set.
      *
      * @method _afterLayoutBuilderLayoutChange
      * @protected
      */
-    _afterLayoutBuilderLayoutChange: function() {
+    _afterLayoutBuilderLayoutChange: function(event) {
         if (this._layoutBuilder) {
-            this._layoutBuilder.set('layout', this.get('layouts')[this._getActiveLayoutIndex()]);
+            this._layoutBuilder.set('layout', event.newVal);
         }
     },
 
@@ -140,10 +130,13 @@ A.FormBuilderLayoutBuilder.prototype = {
      * @protected
      */
     _afterLayoutBuilderModeChange: function() {
-        var layout = this.get('layouts')[this._getActiveLayoutIndex()];
+        var layout = this.get('layout');
 
         this._uiSetLayoutBuilderMode(this.get('mode'));
-        layout.normalizeColsHeight(layout.get('node').all('.row'));
+
+        A.Array.each(layout.get('pages'), function(page) {
+            layout.normalizeColsHeight(page.get('node').all('.row'));
+        });
     },
 
     /**
@@ -160,7 +153,7 @@ A.FormBuilderLayoutBuilder.prototype = {
             addColMoveTarget: A.bind(this._addColMoveTarget, this),
             clickColMoveTarget: A.bind(this._clickColMoveTarget, this),
             container: this.get('contentBox').one('.' + CSS_LAYOUT),
-            layout: this.get('layouts')[this._getActiveLayoutIndex()],
+            layout: this.get('layout'),
             removeColMoveButtons: A.bind(this._removeColMoveButtons, this),
             removeColMoveTargets: A.bind(this._removeColMoveTargets, this)
         });
@@ -169,8 +162,6 @@ A.FormBuilderLayoutBuilder.prototype = {
         this._layoutBuilder.set('chooseColMoveTarget', A.bind(this._chooseColMoveTarget, this, originalChooseColMoveTargetFn));
 
         this._uiSetLayoutBuilderMode(this.get('mode'));
-
-        this._layoutBuilder.get('layout').after('isColumnModeChange', A.bind(this._afterLayoutBuilderIsColumnModeChange, this));
 
         this._eventHandles.push(
             this._fieldToolbar.on('onToolbarFieldMouseEnter', A.bind(this._onFormBuilderToolbarFieldMouseEnter, this))
@@ -255,7 +246,7 @@ A.FormBuilderLayoutBuilder.prototype = {
         if (parentFieldNode) {
             parentFieldNode.getData('field-instance').removeNestedField(this._fieldBeingMoved);
 
-            this.get('layouts')[this._getActiveLayoutIndex()].normalizeColsHeight(new A.NodeList(this.getFieldRow(parentFieldNode.getData('field-instance'))));
+            this.getActivePage().normalizeColsHeight(new A.NodeList(this.getFieldRow(parentFieldNode.getData('field-instance'))));
         }
         else {
             this._fieldBeingMovedCol.set('value', null);
@@ -314,10 +305,14 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _createLastRow: function() {
         var lastRow = this._copyLastRow(),
-            layout = this.get('layout'),
-            rows = layout.get('rows');
+            page = this.getActivePage(),
+            rows;
 
-        layout.addRow(rows.length, lastRow);
+        if (page) {
+            rows = page.get('rows');
+
+            page.addRow(rows.length, lastRow);
+        }
 
         this._lastRow = this._getLastRow();
     },
@@ -380,11 +375,16 @@ A.FormBuilderLayoutBuilder.prototype = {
      * @return {A.LayoutRow}
      */
     _getLastRow: function() {
-        var rows = this.get('layout').get('rows');
+        var page = this.getActivePage(),
+            rows;
 
-        for (var i = rows.length - 1; i >= 0; i--) {
-            if (rows[i].name === 'layout-row') {
-                return rows[i];
+        if (page) {
+            rows = page.get('rows')
+
+            for (var i = rows.length - 1; i >= 0; i--) {
+                if (rows[i].name === 'layout-row') {
+                    return rows[i];
+                }
             }
         }
 

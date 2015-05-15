@@ -18,10 +18,9 @@ YUI({ filter:'raw' }).use(
     'aui-form-builder-field-choice',
     'aui-form-builder-field-text',
     'aui-form-builder-field-sentence',
-    'aui-form-builder-page-break-row',
     'aui-form-builder-pages',
     function(Y) {
-        var layout = new Y.Layout({
+        var page01 = new Y.LayoutPage({
             rows: [
                 new Y.LayoutRow({
                     cols: [
@@ -83,7 +82,7 @@ YUI({ filter:'raw' }).use(
             ]
         });
 
-        var layout2 = new Y.Layout({
+        var page02 = new Y.LayoutPage({
             rows: [
                 new Y.LayoutRow({
                     cols: [
@@ -114,7 +113,9 @@ YUI({ filter:'raw' }).use(
                 icon:'glyphicon glyphicon-font',
                 label: 'Text'
             }],
-            layouts: [layout, layout2]
+            layout: new Y.Layout({
+                pages: [page01, page02]
+            })
         }).render('#formBuilder');
     }
 );

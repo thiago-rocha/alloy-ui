@@ -494,13 +494,14 @@ LayoutBuilderMove.prototype = {
      */
     _moveToTarget: function(event) {
         var layout = this.get('layout'),
+            page = this.getActivePage(),
             target = event.currentTarget;
 
         if (target.hasClass(CSS_MOVE_COL_TARGET)) {
             this.get('clickColMoveTarget')(target);
         }
         else {
-            layout.moveRow(target.getData('row-index'), this._rowToBeMoved);
+            page.moveRow(target.getData('row-index'), this._rowToBeMoved);
         }
     },
 

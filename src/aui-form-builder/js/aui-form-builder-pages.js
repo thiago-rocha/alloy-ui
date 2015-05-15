@@ -1,3 +1,4 @@
+
 /**
  * The Form Builder Pages Builder Component
  *
@@ -7,12 +8,16 @@
 
 var CSS_FORM_BUILDER_ADD_PAGE =
         A.getClassName('form', 'builder', 'pages', 'add', 'page'),
+    CSS_FORM_BUILDER_PAGE_CONTROLS = A.getClassName('form', 'builder', 'page', 'controls'),
     CSS_FORM_BUILDER_PAGES_CONTENT =
         A.getClassName('form', 'builder', 'pages', 'content'),
     CSS_FORM_BUILDER_REMOVE_PAGE =
         A.getClassName('form', 'builder', 'pages', 'remove', 'page'),
     CSS_FORM_BUILDER_PAGINATION = A.getClassName('form', 'builder', 'pagination'),
     CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'page', 'header'),
+    CSS_PAGE_HEADER_DESCRIPTION = A.getClassName('form', 'builder', 'page', 'header', 'description'),
+    CSS_PAGE_HEADER_DESCRIPTION_HIDE_BORDER =
+        A.getClassName('form', 'builder', 'page', 'header', 'description', 'hide', 'border');
     CSS_PAGE_HEADER_ICON = A.getClassName('form', 'builder', 'page', 'header', 'icon'),
     CSS_PAGE_HEADER_TITLE = A.getClassName('form', 'builder', 'page', 'header', 'title'),
     CSS_PAGE_HEADER_TITLE_HIDE_BORDER =
@@ -31,15 +36,10 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
 
     TPL_PAGES: '<div class="' + CSS_FORM_BUILDER_PAGES_CONTENT + '">' +
         '<div class="' + CSS_FORM_BUILDER_PAGINATION + '"></div>' +
-        '<div class="' + CSS_FORM_BUILDER_ADD_PAGE + ' glyphicon glyphicon-plus"></div>' +
-        '<div class="' + CSS_FORM_BUILDER_REMOVE_PAGE + ' glyphicon glyphicon-trash"></div>' +
-        '</div>',
-    TPL_PAGE_HEADER: '<div class="' + CSS_PAGE_HEADER + ' form-inline">' +
-        '<label class="' + CSS_PAGE_HEADER_ICON +
-        '"><span class="glyphicon glyphicon-pencil"></span></label>' +
-        '<input tabindex="1" class="' + CSS_PAGE_HEADER_TITLE + ' ' +
-        CSS_PAGE_HEADER_TITLE_HIDE_BORDER + ' form-control" type="text"></input> ' +
-        '</div>',
+        '<div class="' + CSS_FORM_BUILDER_PAGE_CONTROLS + '">' +
+        '<a href="javascript:;" class="' + CSS_FORM_BUILDER_REMOVE_PAGE + ' glyphicon glyphicon-trash"></a>' +
+        '<a href="javascript:;" class="' + CSS_FORM_BUILDER_ADD_PAGE + ' glyphicon glyphicon-plus"></a>' +
+        '</div></div>',
 
 
     /**
@@ -50,9 +50,9 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
      */
     initializer: function() {
         this.get('contentBox').append(this.TPL_PAGES);
-        this.get('pageHeader').append(this.TPL_PAGE_HEADER);
 
-        this._defaultTitleValue = 'Untitled Page';
+        this._defaultTitlePlaceholderValue = 'Untitled Page';
+
     },
 
     /**
@@ -62,7 +62,6 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
      * @protected
      */
     renderUI: function() {
-        this._uiSetActiveIndexPage(this.get('activeIndex'));
         this._getPagination().render();
     },
 
@@ -73,28 +72,18 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
      * @protected
      */
     bindUI: function() {
-        var content = this.get('contentBox'),
-            pageHeader = this.get('pageHeader');
+        var content = this.get('contentBox');
 
         content.one('.' + CSS_FORM_BUILDER_ADD_PAGE).on('click', A.bind(this._onAddPageClick, this));
         content.one('.' + CSS_FORM_BUILDER_REMOVE_PAGE).on('click', A.bind(this._onRemovePageClick, this));
         this.after('pagesQuantityChange', A.bind(this._afterPagesQuantityChange, this));
-        this.after('activeIndexPageChange', A.bind(this._afterActiveIndexPageChange, this));
-        pageHeader.one('.' + CSS_PAGE_HEADER_TITLE).on('valuechange', A.bind(this._onInputValueChange, this));
+        this.after('activePageNumberChange', A.bind(this._afterActivePageNumberChange, this));
     },
 
+    _afterActivePageNumberChange: function() {},
+
     /**
-     * Fires after `activeIndexPage` changes.
      *
-     * @method _afterActiveIndexPageChange
-     * @protected
-     */
-    _afterActiveIndexPageChange: function() {
-        this._uiSetActiveIndexPage(this.get('activeIndexPage'));
-    },
-
-    /**
-     * 
      *
      * @method _afterPagesQuantityChange
      * @protected
@@ -111,15 +100,18 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
      * @protected
      */
     _createPagination: function() {
-        var pagination = new A.Pagination({
+        return new A.Pagination({
             boundingBox: '.' + CSS_FORM_BUILDER_PAGINATION,
-            page: this.get('activeIndexPage'),
+            on: {
+                pageChange: A.bind(this._onCurrentPageChange, this)
+            },
+            page: this.get('activePageNumber'),
+            strings: {
+                prev: '&#xAB;',
+                next: '&#xBB;'
+            },
             total: this.get('pagesQuantity')
         });
-
-        pagination.on('pageChange', A.bind(this._onCurrentPageChange, this));
-
-        return pagination;
     },
 
     /**
@@ -153,6 +145,8 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
                 quantity: quantity
             }
         );
+
+        this._pagination.set('page', this.get('pagesQuantity'));
     },
 
     /**
@@ -162,21 +156,7 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
      * @protected
      */
     _onCurrentPageChange: function(event) {
-        this.get('contentBox').one('.' + CSS_PAGE_HEADER_TITLE);
-        this.set('activeIndexPage', event.newVal - 1);
-    },
-
-    /**
-     * Fired on input value change.
-     *
-     * @method _onInputValueChange
-     * @protected
-     */
-    _onInputValueChange: function(event) {
-        var newTitles = this.get('titles');
-
-        newTitles[this.get('activeIndexPage')] = event.newVal;
-        this.set('title', newTitles);
+        this.set('activePageNumber', event.newVal);
     },
 
     /**
@@ -186,16 +166,23 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
      * @protected
      */
     _onRemovePageClick: function() {
-        var activeIndex = this.get('activeIndexPage');
+        var activePageNumber = this.get('activePageNumber'),
+            page = Math.max(1, activePageNumber - 1);
 
         this._getPagination().prev();
         this.set('pagesQuantity', this.get('pagesQuantity') - 1);
 
         this.fire(
             'remove', {
-                removedIndex: activeIndex
+                removedIndex: activePageNumber - 1
             }
         );
+
+        this._pagination.set('page', page);
+
+        // We need to improve aui-pagination. This should be done
+        // automatically after the 'page' attribute is set.
+        this._pagination.getItem(page).addClass('active');
     },
 
     /**
@@ -208,53 +195,18 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
         var pagination = this._getPagination();
 
         pagination.set('total', total);
-
-        this._uiSetActiveIndexPage(this.get('activeIndexPage'));
-    },
-
-    /**
-     * Updates the ui according to the value of the `title` attribute.
-     *
-     * @method _uiSetTitle
-     * @param {String} title
-     * @protected
-     */
-    _uiSetActiveIndexPage: function(activeIndex) {
-        var title = this.get('titles')[activeIndex],
-            inputNode = this.get('pageHeader').one('.' + CSS_PAGE_HEADER_TITLE);
-
-        if (!title || !title.trim()) {
-            inputNode.set('value', this._defaultTitleValue + ' (' +
-                this.get('activeIndexPage') + ' of ' + this.get('pagesQuantity') + ')');
-        }
-        else {
-            inputNode.set('value', title);
-        }
     }
 }, {
     ATTRS: {
         /**
          * Index of the current active page.
          *
-         * @attribute activeIndexPage
+         * @attribute activePageNumber
          * @default 1
          * @type {Number}
          */
-        activeIndexPage: {
+        activePageNumber: {
             value: 1
-        },
-
-        /**
-         * 
-         *
-         * @attribute pageHeader
-         * @default 0
-         * @type {Node}
-         * @writeOnce
-         */
-        pageHeader: {
-            setter: A.one,
-            writeOnce: true
         },
 
         /**
@@ -266,18 +218,6 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Widget, [], {
          */
         pagesQuantity: {
             value: 0
-        },
-
-        /**
-         * List of all pages titles.
-         *
-         * @attribute titles
-         * @default []
-         * @type {Array}
-         * @writeOnce
-         */
-        titles: {
-            value: []
         }
     }
 });
