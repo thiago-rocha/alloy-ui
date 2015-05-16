@@ -262,15 +262,19 @@ A.FormBuilderFieldTypes.prototype = {
             cols,
             field,
             row,
-            rows = this.get('layout').get('rows');
+            page,
+            pages = this.get('layout').get('pages');
 
-        for (row = 0; row < rows.length; row++) {
-            cols = rows[row].get('cols');
-            for (col = 0; col < cols.length; col++) {
-                field = cols[col].get('value');
-                if (field && (field instanceof A.FormField)) {
-                    if (this._hasFieldType(fieldType, field)) {
-                        return true;
+        for (page = 0; page < pages.length; page++) {
+            rows = pages[page].get('rows');
+            for (row = 0; row < rows.length; row++) {
+                cols = rows[row].get('cols');
+                for (col = 0; col < cols.length; col++) {
+                    field = cols[col].get('value');
+                    if (field && (field instanceof A.FormField)) {
+                        if (this._hasFieldType(fieldType, field)) {
+                            return true;
+                        }
                     }
                 }
             }

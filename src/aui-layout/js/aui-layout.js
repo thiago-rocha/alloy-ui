@@ -14,6 +14,7 @@ var CSS_LAYOUT_NODE = A.getClassName('layout', 'node'),
     SELECTOR_LAYOUT_COL_CONTENT = '.layout-col-content',
     SELECTOR_LAYOUT_ROW_CONTAINER_ROW = '.layout-row-container-row',
     SELECTOR_ROW = '.row';
+    SELECTOR_PAGE = '.layout-page';
 
 /**
  * A base class for Layout.
@@ -48,15 +49,15 @@ A.Layout = A.Base.create('layout', A.Base, [], {
         }
 
         this._eventHandles = [
-            this.after('rowsChange', A.bind(this._afterRowsChange, this)),
+            this.after('pagesChange', A.bind(this._afterPagesChange, this)),
             this.after('layout-row:colsChange', A.bind(this._afterLayoutColsChange, this)),
             this.after('layout-col:valueChange', A.bind(this._afterLayoutValueChange, this)),
             A.on('windowresize', A.bind(this._afterLayoutWindowResize, this))
         ];
 
-        A.Array.invoke(this.get('rows'), 'addTarget', this);
+        A.Array.invoke(this.get('pages'), 'addTarget', this);
 
-        this._uiSetRows(this.get('rows'));
+        this._uiSetPages(this.get('pages'));
     },
 
     /**
@@ -67,54 +68,6 @@ A.Layout = A.Base.create('layout', A.Base, [], {
      */
     destructor: function() {
         (new A.EventHandle(this._eventHandles)).detach();
-    },
-
-    /**
-     * Adds a new row with specified number of cols to the current layout.
-     *
-     * @method addRowWithSpecifiedColNumber
-     * @param {Number} numberOfCols Number of cols to create the row with.
-     */
-    addRowWithSpecifiedColNumber: function(numberOfCols) {
-        var cols = [],
-            i,
-            row,
-            rows = this.get('rows').concat();
-
-        numberOfCols = numberOfCols || 1;
-
-        for (i = 0; i < numberOfCols; i++) {
-            cols.push(new A.LayoutCol({ size: MAXIMUM_COLS_PER_ROW / numberOfCols }));
-        }
-
-        row = new A.LayoutRow({ cols: cols });
-
-        rows.splice(rows.length, 0, row);
-
-        this.set('rows', rows);
-    },
-
-    /**
-     * Adds a new row to the current layout.
-     *
-     * @method addRow
-     * @param {Number} index Position to insert the new row.
-     * @param {Node} row A brand new row.
-     */
-    addRow: function(index, row) {
-        var rows = this.get('rows').concat();
-
-        if (A.Lang.isUndefined(index)) {
-            index = rows.length;
-        }
-
-        if (!row) {
-            row = new A.LayoutRow();
-        }
-
-        rows.splice(index, 0, row);
-
-        this.set('rows', rows);
     },
 
     /**
@@ -136,18 +89,6 @@ A.Layout = A.Base.create('layout', A.Base, [], {
         }
 
         this._handleResponsive(A.config.win.innerWidth);
-    },
-
-    /**
-     * Moves a row to a different position.
-     *
-     * @method moveRow
-     * @param {Number} index The new position of the row.
-     * @param {Node} row Row to change the position.
-     */
-    moveRow: function(index, row) {
-        this.removeRow(row);
-        this.addRow(index, row);
     },
 
     /**
@@ -187,21 +128,6 @@ A.Layout = A.Base.create('layout', A.Base, [], {
     },
 
     /**
-     * Removes a row from this layout.
-     *
-     * @method removeRow
-     * @param {Number | A.LayoutRow} row Row index or row to be removed from this layout
-     */
-    removeRow: function(row) {
-        if (A.Lang.isNumber(row)) {
-            this._removeRowByIndex(row);
-        }
-        else if (A.instanceOf(row, A.LayoutRow)) {
-            this._removeRowByReference(row);
-        }
-    },
-
-    /**
      * Fires after `layout-row:colsChange` event.
      *
      * @method _afterLayoutColsChange
@@ -209,6 +135,7 @@ A.Layout = A.Base.create('layout', A.Base, [], {
      */
     _afterLayoutColsChange: function(event) {
         var row = event.target;
+
         this.normalizeColsHeight(new A.NodeList(row.get('node').one(SELECTOR_ROW)));
     },
 
@@ -234,15 +161,15 @@ A.Layout = A.Base.create('layout', A.Base, [], {
     /**
      * Fires after rows changes.
      *
-     * @method _afterRowsChange
+     * @method _afterPagesChange
      * @param {EventFacade} event
      * @protected
      */
-    _afterRowsChange: function(event) {
+    _afterPagesChange: function(event) {
         A.Array.invoke(event.prevVal, 'removeTarget', this);
         A.Array.invoke(event.newVal, 'addTarget', this);
 
-        this._uiSetRows(this.get('rows'));
+        this._uiSetPages(this.get('pages'));
     },
 
     /**
@@ -344,65 +271,78 @@ A.Layout = A.Base.create('layout', A.Base, [], {
     _setProgressiveEnhancementLayout: function(container) {
         var instance = this,
             layoutCols = [],
+            layoutPages = [],
+            layoutPage,
             layoutRow,
-            layoutRows = [],
-            rows = container.all(SELECTOR_ROW);
+            layoutRows = [];
 
-        rows.each(function(row) {
-            layoutCols = instance._createLayoutCols(row.all(SELECTOR_COL));
+        container.all(SELECTOR_PAGE).each(function(page) {
+            page.all(SELECTOR_ROW).each(function(row) {
+                layoutCols = instance._createLayoutCols(page.all(SELECTOR_COL));
 
-            layoutRow = new A.LayoutRow(
+                layoutRow = new A.LayoutRow(
+                    {
+                        cols: layoutCols,
+                        node: page.ancestor(SELECTOR_LAYOUT_ROW_CONTAINER_ROW)
+                    }
+                );
+
+                layoutCols = [];
+
+                layoutRows.push(layoutRow);
+            });
+
+            layoutPage = new A.LayoutPage(
                 {
-                    cols: layoutCols,
-                    node: row.ancestor(SELECTOR_LAYOUT_ROW_CONTAINER_ROW)
+                    rows: layoutRows
                 }
             );
 
-            layoutCols = [];
+            layoutRows = [];
 
-            layoutRows.push(layoutRow);
+            layoutPages.push(layoutPages);
         });
 
-        this.set('rows', layoutRows);
+        this.set('pages', layoutPages);
     },
 
     /**
-     * Sets the `row` attribute.
+     * Sets the `pages` attribute.
      *
-     * @method _setRows
+     * @method _setPages
      * @param {Array} val
      * @protected
      */
-    _setRows: function(val) {
+    _setPages: function(val) {
         var i,
             newVal = [],
-            row;
+            page;
 
         for (i = 0; i < val.length; i++) {
-            row = val[i];
-            if (!A.instanceOf(row, A.LayoutRow)) {
-                row = new A.LayoutRow(row);
+            page = val[i];
+            if (!A.instanceOf(page, A.LayoutPage)) {
+                page = new A.LayoutPage(page);
             }
 
-            newVal.push(row);
+            newVal.push(page);
         }
 
         return newVal;
     },
 
     /**
-     * Updates the UI according to the value of the `rows` attribute.
+     * Updates the UI according to the value of the `pages` attribute.
      *
-     * @method _uiSetRows
-     * @param {Array} rows
+     * @method _uiSetPages
+     * @param {Array} pages
      * @protected
      */
-    _uiSetRows: function(rows) {
+    _uiSetPages: function(pages) {
         var node = this.get('node');
 
         node.empty();
-        A.each(rows, function(row) {
-            node.append(row.get('node'));
+        A.each(pages, function(page) {
+            node.append(page.get('node'));
         });
     }
 }, {
@@ -444,13 +384,13 @@ A.Layout = A.Base.create('layout', A.Base, [], {
         },
 
         /**
-         * Rows to be appended into container node
+         * Pages to be appended into container node
          *
-         * @attribute rows
+         * @attribute pages
          * @type {Array}
          */
-        rows: {
-            setter: '_setRows',
+        pages: {
+            setter: '_setPages',
             validator: A.Lang.isArray,
             value: []
         }
