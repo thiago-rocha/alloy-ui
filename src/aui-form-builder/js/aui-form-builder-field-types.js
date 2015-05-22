@@ -260,17 +260,26 @@ A.FormBuilderFieldTypes.prototype = {
     _hasFieldTypeAll: function(fieldType) {
         var col,
             cols,
+            f,
             field,
+            fieldLists,
+            fields,
             row,
             rows = this.getActiveLayout().get('rows');
 
         for (row = 0; row < rows.length; row++) {
             cols = rows[row].get('cols');
             for (col = 0; col < cols.length; col++) {
-                field = cols[col].get('value');
-                if (field && (field instanceof A.FormField)) {
-                    if (this._hasFieldType(fieldType, field)) {
-                        return true;
+                fieldLists = cols[col].get('value');
+                if (fieldLists && (fieldLists instanceof A.FormBuilderFieldList)) {
+                    fields = fieldLists.get('fields');
+                    for (f = 0; f < fields.length; f++) {
+                        field = fields[f];
+                        if (field) {
+                            if (this._hasFieldType(fieldType, field)) {
+                                return true;
+                            }
+                        }
                     }
                 }
             }

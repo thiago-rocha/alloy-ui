@@ -5,12 +5,13 @@
  */
 
 var CSS_EDIT_LAYOUT_BUTTON = A.getClassName('form', 'builder', 'edit', 'layout', 'button'),
-    CSS_EMPTY_COL = A.getClassName('form', 'builder', 'empty', 'col'),
     CSS_EMPTY_COL_ADD_BUTTON = A.getClassName('form', 'builder', 'empty', 'col', 'add', 'button'),
+    CSS_FIELD_MOVE_TARGET =
+        A.getClassName('form', 'builder', 'field', 'move', 'target'),
+    CSS_EMPTY_COL = A.getClassName('form', 'builder', 'empty', 'col'),
     CSS_EMPTY_COL_CIRCLE = A.getClassName('form', 'builder', 'empty', 'col', 'circle'),
     CSS_EMPTY_COL_ICON = A.getClassName('form', 'builder', 'empty', 'col', 'icon'),
     CSS_FIELD = A.getClassName('form', 'builder', 'field'),
-    CSS_FIELD_MOVE_TARGET = A.getClassName('form', 'builder', 'field', 'move', 'target'),
     CSS_HEADER = A.getClassName('form', 'builder', 'header'),
     CSS_HEADER_BACK = A.getClassName('form', 'builder', 'header', 'back'),
     CSS_HEADER_TITLE = A.getClassName('form', 'builder', 'header', 'title'),
@@ -197,7 +198,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
-     * Returns the active `LayoutPage`.
+     * Returns the active layout.
      *
      * @method getActiveLayout
      * @return {A.LayoutPage}
@@ -207,14 +208,14 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
-     * Returns the `fieldInstance`'s row.
+     * Returns the `fieldListInstance`'s row.
      *
      * @method getFieldRow
-     * @param {A.FormField} fieldInstance
+     * @param {A.FormField} fieldListInstance
      * @return {Node} The row where is the field parameter
      */
-    getFieldRow: function(fieldInstance) {
-        return fieldInstance.get('content').ancestor('.layout-row');
+    getFieldRow: function(fieldListInstance) {
+        return fieldListInstance.get('contentBox').ancestor('.layout-row');
     },
 
     /**
@@ -237,7 +238,8 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         }
         else {
             col = field.get('content').ancestor('.col').getData('layout-col');
-            this._makeColumnEmpty(col);
+            col.get('value').removeField(field);
+            this.get('layout').normalizeColsHeight(new A.NodeList(this.getFieldRow(col.get('value'))));
         }
 
         this._updateUniqueFieldType();
@@ -326,8 +328,13 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         var field = event.field;
 
         if (this._newFieldContainer) {
-            if (A.instanceOf(this._newFieldContainer, A.LayoutCol)) {
-                this._newFieldContainer.set('value', field);
+            if (A.instanceOf(this._newFieldContainer.get('value'), A.FormBuilderFieldList)) {
+console.log('FormBuilderFieldList');
+                this._newFieldContainer.get('value').addField(field);
+            }
+            else if (A.instanceOf(this._newFieldContainer, A.LayoutCol)) {
+console.log('LayoutCol');
+                this._newFieldContainer.set('value', new A.FormBuilderFieldList({ fields: [field] }));
             }
             else if (A.instanceOf(this._newFieldContainer, A.FormField)) {
                 this._addNestedField(
@@ -340,9 +347,11 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         }
         else {
             this._handleEditEvent(field);
+
             this.getActiveLayout().normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
         }
 
+        this.get('layout').normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
         this._handleCreateEvent(field);
         this.disableUniqueFieldType(field);
     },
@@ -383,7 +392,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
     _afterLayoutColValueChange: function(event) {
         var col = event.target;
 
-        if (A.instanceOf(event.newVal, A.FormField)) {
+        if (A.instanceOf(event.newVal, A.FormBuilderFieldList)) {
             col.set('movableContent', true);
         }
         else if (!event.newVal) {
@@ -502,9 +511,8 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
      * @protected
      */
     _makeColumnEmpty: function(col) {
-        col.set('value', {
-            content: this.TPL_EMPTY_COL
-        });
+        var emptyList = new A.FormBuilderFieldList();
+        col.set('value', { content: emptyList.get('contentBox') });
     },
 
     /**

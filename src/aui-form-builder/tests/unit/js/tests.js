@@ -417,7 +417,7 @@ YUI.add('aui-form-builder-tests', function(Y) {
             this._clickFieldType();
             this._clickFieldSettingsSaveButton();
 
-            Y.Assert.isTrue(Y.instanceOf(col.get('value'), Y.FormBuilderFieldSentence));
+            Y.Assert.isTrue(Y.instanceOf(col.get('value').get('fields')[0], Y.FormBuilderFieldSentence));
         },
 
         'should make field columns movable': function() {
@@ -581,8 +581,12 @@ YUI.add('aui-form-builder-tests', function(Y) {
                         cols: [
                             new Y.LayoutCol({
                                 size: 4,
-                                value: new Y.FormBuilderFieldText({
-                                    title: 'Monarch'
+                                value: new Y.FormBuilderFieldList({
+                                    fields: [
+                                        new Y.FormBuilderFieldText({
+                                            title: 'Monarch'
+                                        })
+                                    ]
                                 })
                             })
                         ]
@@ -616,10 +620,14 @@ YUI.add('aui-form-builder-tests', function(Y) {
             this._formBuilder.getActiveLayout().get('rows')[0].set('cols', [
                 new Y.LayoutCol({
                     size: 12,
-                    value: new Y.FormBuilderFieldText({
-                        help: 'not just anybody',
-                        title: 'Monarch'
-                    })
+                    value: new Y.FormBuilderFieldList({
+                                fields: [
+                                    new Y.FormBuilderFieldText({
+                                        help: 'not just anybody',
+                                        title: 'Monarch'
+                                    })
+                                ]
+                            })
                 })
             ]);
 

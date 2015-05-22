@@ -98,13 +98,20 @@ A.LayoutCol = A.Base.create('layout-col', A.Base, [], {
             if (value.content) {
                 valueNode.append(value.content);
             }
-            else {
+            else if (value.get('content')) {
                 valueNode.append(value.get('content'));
 
                 this._contentEventHandle = value.after(
                     'contentChange',
                     A.bind(this._afterContentChange, this)
                 );
+            }
+
+            else if (value.get('contentBox')) {
+                valueNode.append(value.get('contentBox'));
+            }
+            else {
+                valueNode.append(value);
             }
         }
     }
