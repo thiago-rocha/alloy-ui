@@ -104,9 +104,13 @@ YUI({ filter:'raw' }).use(
                         new Y.LayoutCol({
                             movableContent: false,
                             size: 12,
-                            value: new Y.FormBuilderFieldText({
-                                help: 'Type your full name here',
-                                title: 'What\'s your name?'
+                            value: new Y.FormBuilderFieldList({
+                                fields: [
+                                    new Y.FormBuilderFieldText({
+                                        help: 'Type your full name here',
+                                        title: 'What\'s your name?'
+                                    })
+                                ]
                             })
                         })
                     ]

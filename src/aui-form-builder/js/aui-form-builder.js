@@ -4,14 +4,41 @@
  * @module aui-form-builder
  */
 
+// <<<<<<< HEAD
+// var CSS_EDIT_LAYOUT_BUTTON = A.getClassName('form', 'builder', 'edit', 'layout', 'button'),
+//     CSS_EMPTY_COL = A.getClassName('form', 'builder', 'empty', 'col'),
+//     CSS_EMPTY_COL_ADD_BUTTON = A.getClassName('form', 'builder', 'empty', 'col', 'add', 'button'),
+//     CSS_EMPTY_COL_CIRCLE = A.getClassName('form', 'builder', 'empty', 'col', 'circle'),
+//     CSS_EMPTY_COL_ICON = A.getClassName('form', 'builder', 'empty', 'col', 'icon'),
+// =======
+// var CSS_ADD_PAGE_BREAK = A.getClassName('form', 'builder', 'add', 'page', 'break'),
+//     CSS_EDIT_LAYOUT_BUTTON = A.getClassName('form', 'builder', 'edit', 'layout', 'button'),
+//     CSS_EMPTY_COL_ADD_BUTTON = A.getClassName('form', 'builder', 'empty', 'col', 'add', 'button'),
+//     CSS_EMPTY_LAYOUT = A.getClassName('form', 'builder', 'empty', 'layout'),
+// >>>>>>> RESET
+//     CSS_FIELD = A.getClassName('form', 'builder', 'field'),
+//     CSS_HEADER = A.getClassName('form', 'builder', 'header'),
+//     CSS_HEADER_BACK = A.getClassName('form', 'builder', 'header', 'back'),
+//     CSS_HEADER_TITLE = A.getClassName('form', 'builder', 'header', 'title'),
+//     CSS_LAYOUT = A.getClassName('form', 'builder', 'layout'),
+//     CSS_MENU = A.getClassName('form', 'builder', 'menu'),
+//     CSS_MENU_BUTTON = A.getClassName('form', 'builder', 'menu', 'button'),
+//     CSS_MENU_CONTENT = A.getClassName('form', 'builder', 'menu', 'content'),
+// <<<<<<< HEAD
+//     CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'pages', 'header'),
+//     CSS_PAGES = A.getClassName('form', 'builder', 'pages'),
+// =======
+//     CSS_PAGE_BREAK_ROW = A.getClassName('form', 'builder', 'page', 'break', 'row'),
+//     CSS_ROW_CONTAINER_FIELDS = A.getClassName('form', 'builder', 'row', 'container', 'fields'),
+//     CSS_ROW_CONTAINER_FIELDS = A.getClassName('form', 'builder', 'row', 'container', 'fields'),
+// >>>>>>> RESET
 var CSS_EDIT_LAYOUT_BUTTON = A.getClassName('form', 'builder', 'edit', 'layout', 'button'),
-    CSS_EMPTY_COL_ADD_BUTTON = A.getClassName('form', 'builder', 'empty', 'col', 'add', 'button'),
-    CSS_FIELD_MOVE_TARGET =
-        A.getClassName('form', 'builder', 'field', 'move', 'target'),
     CSS_EMPTY_COL = A.getClassName('form', 'builder', 'empty', 'col'),
+    CSS_EMPTY_COL_ADD_BUTTON = A.getClassName('form', 'builder', 'empty', 'col', 'add', 'button'),
     CSS_EMPTY_COL_CIRCLE = A.getClassName('form', 'builder', 'empty', 'col', 'circle'),
     CSS_EMPTY_COL_ICON = A.getClassName('form', 'builder', 'empty', 'col', 'icon'),
     CSS_FIELD = A.getClassName('form', 'builder', 'field'),
+    CSS_FIELD_MOVE_TARGET = A.getClassName('form', 'builder', 'field', 'move', 'target'),
     CSS_HEADER = A.getClassName('form', 'builder', 'header'),
     CSS_HEADER_BACK = A.getClassName('form', 'builder', 'header', 'back'),
     CSS_HEADER_TITLE = A.getClassName('form', 'builder', 'header', 'title'),
@@ -198,7 +225,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
-     * Returns the active layout.
+     * Returns the active `LayoutPage`.
      *
      * @method getActiveLayout
      * @return {A.LayoutPage}
@@ -238,8 +265,9 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         }
         else {
             col = field.get('content').ancestor('.col').getData('layout-col');
+console.log(col.get('value'));
             col.get('value').removeField(field);
-            this.get('layout').normalizeColsHeight(new A.NodeList(this.getFieldRow(col.get('value'))));
+            this.getActiveLayout().normalizeColsHeight(new A.NodeList(this.getFieldRow(col.get('value'))));
         }
 
         this._updateUniqueFieldType();
@@ -291,7 +319,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
      */
     _addNestedField: function(field, nested, index) {
         field.addNestedField(index, nested);
-        this.getActiveLayout().normalizeColsHeight(new A.NodeList(this.getFieldRow(nested)));
+        this.getActiveLayout().normalizeColsHeight(new A.NodeList(nested.get('content').ancestor('.layout-row')));
     },
 
     /**
@@ -347,11 +375,10 @@ console.log('LayoutCol');
         }
         else {
             this._handleEditEvent(field);
-
             this.getActiveLayout().normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
         }
 
-        this.get('layout').normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
+        this.getActiveLayout().normalizeColsHeight(new A.NodeList(field.get('content').ancestor('.layout-row')));
         this._handleCreateEvent(field);
         this.disableUniqueFieldType(field);
     },

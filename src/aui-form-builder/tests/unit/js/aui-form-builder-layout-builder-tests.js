@@ -38,28 +38,36 @@ YUI.add('aui-form-builder-layout-builder-tests', function(Y) {
                             new Y.LayoutCol({
                                 movableContent: true,
                                 size: 4,
-                                value: new Y.FormBuilderFieldSentence({
-                                    help: 'My Help',
-                                    nestedFields: [
-                                        new Y.FormBuilderFieldText({
-                                            help: 'First nested field',
-                                            title: 'Nested Field 1'
-                                        }),
-                                        new Y.FormBuilderFieldText({
-                                            help: 'Second nested field',
-                                            title: 'Nested Field 2'
-                                        })
-                                    ],
-                                    title: 'My Title'
-                                })
+                                value: new Y.FormBuilderFieldList({
+                                fields: [
+                                    new Y.FormBuilderFieldSentence({
+                                        help: 'My Help',
+                                        nestedFields: [
+                                            new Y.FormBuilderFieldText({
+                                                help: 'First nested field',
+                                                title: 'Nested Field 1'
+                                            }),
+                                            new Y.FormBuilderFieldText({
+                                                help: 'Second nested field',
+                                                title: 'Nested Field 2'
+                                            })
+                                        ],
+                                        title: 'My Title'
+                                    })      
+                                ]
+                            })
                             }),
                             new Y.LayoutCol({
                                 size: 4
                             }),
                             new Y.LayoutCol({
                                 size: 4,
-                                value: new Y.FormBuilderFieldSentence({
-                                    title: 'Another Field'
+                                value: new Y.FormBuilderFieldList({
+                                    fields: [
+                                        new Y.FormBuilderFieldSentence({
+                                            title: 'Another Field'
+                                        })
+                                    ]
                                 })
                             })
                         ]
