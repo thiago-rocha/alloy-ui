@@ -48,7 +48,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         '<div class="' + CSS_EMPTY_COL_ADD_BUTTON + '" tabindex="9">' +
         '<span class="glyphicon glyphicon-plus ' + CSS_EMPTY_COL_ICON + '"></span>' +
         '<div class="' + CSS_EMPTY_COL_LABEL + '">Add Field</div></div>' +
-        '<button class="' + CSS_FIELD_MOVE_TARGET +
+        '<button type="button" class="' + CSS_FIELD_MOVE_TARGET +
         ' layout-builder-move-target layout-builder-move-col-target btn btn-default">' +
         'Paste here</button>' +
         '</div>',
