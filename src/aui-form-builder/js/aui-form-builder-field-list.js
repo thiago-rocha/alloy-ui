@@ -9,6 +9,7 @@ var CSS_EMPTY_COL = A.getClassName('form', 'builder', 'empty', 'col'),
         A.getClassName('form', 'builder', 'empty', 'col', 'add', 'button'),
     CSS_EMPTY_COL_CIRCLE = A.getClassName('form', 'builder', 'empty', 'col', 'circle'),
     CSS_EMPTY_COL_ICON = A.getClassName('form', 'builder', 'empty', 'col', 'icon'),
+    CSS_EMPTY_FIELD_LIST = A.getClassName('form', 'builder', 'empty', 'field', 'list'),
     CSS_FIELD_LIST = A.getClassName('form', 'builder', 'field', 'list'),
     CSS_FIELD_MOVE_TARGET =
         A.getClassName('form', 'builder', 'field', 'move', 'target'),
@@ -101,12 +102,15 @@ console.log('addField');
      * @protected
      */
     _uiSetFields: function(fields) {
-        var container = this.get('contentBox').one('.' + CSS_ROW_CONTAINER);
+        var contentBox = this.get('contentBox'),
+            container = contentBox.one('.' + CSS_ROW_CONTAINER);
 
         container.empty();
         A.each(fields, function(field) {
             container.append(field.get('content'));
         });
+
+        contentBox.toggleClass(CSS_EMPTY_FIELD_LIST, !fields.length);
     }
 }, {
 

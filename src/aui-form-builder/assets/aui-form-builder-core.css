@@ -219,6 +219,11 @@
     z-index: 1;
 }
 
+.form-builder-empty-field-list .form-builder-empty-col-add-button {
+    position: absolute;
+    top: 50%;
+}
+
 .form-builder-empty-col-add-button:before {
     border-top: 2px solid #cce4ff;
     bottom: 0;
