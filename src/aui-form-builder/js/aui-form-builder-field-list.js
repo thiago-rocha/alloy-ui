@@ -33,7 +33,7 @@ var CSS_FIELD_LIST = A.getClassName('form', 'builder', 'field', 'list'),
  * @constructor
  */
 A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
-    TPL_ADD_FIELD: '<div class="' + CSS_FIELD_LIST_ADD_BUTTON + '" tabindex="9">' +
+    TPL_ADD_FIELD: '<div class="' + CSS_FIELD_LIST_ADD_BUTTON + ' ' + CSS_FIELD_LIST_ADD_BUTTON_VISIBLE + '" tabindex="9">' +
         '<div class="' + CSS_FIELD_LIST_ADD_BUTTON_CONTENT + '">' +
         '<span class="' + CSS_FIELD_LIST_ADD_BUTTON_CIRCLE + '">' +
         '<span class="' + CSS_FIELD_LIST_ADD_BUTTON_ICON + '"></span>' +
@@ -125,9 +125,7 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
     _onMouseEnterAddButton: function(event) {
         var addButtonNode = event.currentTarget;
 
-        var addButtonContentNode = addButtonNode.one('.' + CSS_FIELD_LIST_ADD_BUTTON_CONTENT);
-
-        addButtonContentNode.addClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
+        addButtonNode.addClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
     },
 
     /**
@@ -138,11 +136,13 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
      * @protected
      */
     _onMouseLeaveAddButton: function(event) {
-        var addButtonNode = event.currentTarget;
+        var addButtonNode = event.currentTarget,
+            content = this.get('content'),
+            addButtonsNodeList = content.all('.' + CSS_FIELD_LIST_ADD_BUTTON);
 
-        var addButtonContentNode = addButtonNode.one('.' + CSS_FIELD_LIST_ADD_BUTTON_CONTENT);
-
-        addButtonContentNode.removeClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
+        if (addButtonsNodeList.indexOf(addButtonNode) < addButtonsNodeList.size() - 1) {
+            addButtonNode.removeClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
+        }
     },
 
     /**
@@ -159,8 +159,12 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
 
         container.empty();
 
-        A.each(fields, function(field) {
-            container.append(instance.TPL_ADD_FIELD);
+        A.each(fields, function(field, index) {
+            var addButtonNode = A.Node.create(instance.TPL_ADD_FIELD);
+
+            addButtonNode.removeClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
+
+            container.append(addButtonNode);
             container.append(field.get('content'));
         });
 

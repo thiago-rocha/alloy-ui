@@ -22,7 +22,7 @@
     display: none;
 }
 
-.form-builder-field-list-add-button-content.form-builder-field-list-add-button-visible {
+.form-builder-field-list-add-button-visible .form-builder-field-list-add-button-content {
     display: block;
 }
 
