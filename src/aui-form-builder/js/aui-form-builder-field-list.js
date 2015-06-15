@@ -9,8 +9,12 @@ var CSS_FIELD_LIST = A.getClassName('form', 'builder', 'field', 'list'),
         A.getClassName('form', 'builder', 'field', 'list', 'add', 'button'),
     CSS_FIELD_LIST_ADD_BUTTON_CIRCLE =
         A.getClassName('form', 'builder', 'field', 'list', 'add', 'button', 'circle'),
+    CSS_FIELD_LIST_ADD_BUTTON_CONTENT =
+        A.getClassName('form', 'builder', 'field', 'list', 'add', 'button', 'content'),
     CSS_FIELD_LIST_ADD_BUTTON_ICON =
         A.getClassName('form', 'builder', 'field', 'list', 'add', 'button', 'icon'),
+    CSS_FIELD_LIST_ADD_BUTTON_VISIBLE =
+        A.getClassName('form', 'builder', 'field', 'list', 'add', 'button', 'visible'),
     CSS_FIELD_LIST_CONTAINER =
         A.getClassName('form', 'builder', 'field', 'list', 'container'),
     CSS_FIELD_LIST_EMPTY = A.getClassName('form', 'builder', 'field', 'list', 'empty'),
@@ -30,6 +34,7 @@ var CSS_FIELD_LIST = A.getClassName('form', 'builder', 'field', 'list'),
  */
 A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
     TPL_ADD_FIELD: '<div class="' + CSS_FIELD_LIST_ADD_BUTTON + '" tabindex="9">' +
+        '<div class="' + CSS_FIELD_LIST_ADD_BUTTON_CONTENT + '">' +
         '<span class="' + CSS_FIELD_LIST_ADD_BUTTON_CIRCLE + '">' +
         '<span class="' + CSS_FIELD_LIST_ADD_BUTTON_ICON + '"></span>' +
         '</span>' +
@@ -39,7 +44,7 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
         '</div>',
     TPL_FIELD_LIST: '<div class="' + CSS_FIELD_LIST + '">' +
         '<div class="' + CSS_FIELD_LIST_CONTAINER + '"></div>' +
-        '</div>',
+        '</div></div>',
 
     /**
      * Construction logic executed during the `A.FormBuilderFieldList`
@@ -54,7 +59,9 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
         this._uiSetFields(this.get('fields'));
 
         content.delegate('click', this._onClickAddField, '.' + CSS_FIELD_LIST_ADD_BUTTON_CIRCLE, this),
-        content.delegate('mouseover', this._onMouseoverField, '.' + CSS_FIELD_LIST_ADD_BUTTON, this),
+        content.delegate('mouseenter', this._onMouseEnterAddButton, '.' + CSS_FIELD_LIST_ADD_BUTTON, this),
+        content.delegate('mouseleave', this._onMouseLeaveAddButton, '.' + CSS_FIELD_LIST_ADD_BUTTON, this),
+
         this.after('fieldsChange', A.bind(this._afterFieldsChange, this));
     },
 
@@ -66,7 +73,7 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
      */
     addField: function(field) {
         var fields = this.get('fields');
-        
+
         fields.splice(this._newFieldIndex, 0, field);
         this.set('fields', fields);
     },
@@ -96,7 +103,7 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
     },
 
     /**
-     * Fired when the button for adding a new field is clicked.
+     * Fired when mouse enters the button for adding a new field.
      *
      * @method _onClickAddField
      * @param {EventFacade} event
@@ -109,17 +116,33 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
     },
 
     /**
-     * Fired when the mouse over button for adding a new field is clicked.
+     * Fired when mouse enters the button for adding a new field.
      *
-     * @method _onMouseoverField
+     * @method _onMouseEnterAddButton
      * @param {EventFacade} event
      * @protected
      */
-    _onMouseoverField: function(event) {
-        var fieldList = this.get('content').all('.' + CSS_FIELD_LIST_ADD_BUTTON);
+    _onMouseEnterAddButton: function(event) {
+        var addButtonNode = event.currentTarget;
 
-        fieldList.indexOf(event.target);
-console.log(fieldList.indexOf(event.target));
+        var addButtonContentNode = addButtonNode.one('.' + CSS_FIELD_LIST_ADD_BUTTON_CONTENT);
+
+        addButtonContentNode.addClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
+    },
+
+    /**
+     * Fired when mouse leaves the button for adding a new field.
+     *
+     * @method _onMouseLeaveAddButton
+     * @param {EventFacade} event
+     * @protected
+     */
+    _onMouseLeaveAddButton: function(event) {
+        var addButtonNode = event.currentTarget;
+
+        var addButtonContentNode = addButtonNode.one('.' + CSS_FIELD_LIST_ADD_BUTTON_CONTENT);
+
+        addButtonContentNode.removeClass(CSS_FIELD_LIST_ADD_BUTTON_VISIBLE);
     },
 
     /**
@@ -135,8 +158,8 @@ console.log(fieldList.indexOf(event.target));
             instance = this;
 
         container.empty();
+
         A.each(fields, function(field) {
-console.log(instance.TPL_ADD_FIELD);
             container.append(instance.TPL_ADD_FIELD);
             container.append(field.get('content'));
         });
