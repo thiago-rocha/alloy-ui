@@ -86,7 +86,7 @@ A.FormBuilderFieldToolbar = A.Base.create('form-builder-field-toolbar', A.Base, 
     },
 
     /**
-     * Closes the toolbar
+     * Closes the toolbar.
      *
      * @method close
      */
@@ -95,10 +95,11 @@ A.FormBuilderFieldToolbar = A.Base.create('form-builder-field-toolbar', A.Base, 
     },
 
     /**
-     * Finds one toolbar's item using the selector
+     * Finds one toolbar's item using the selector.
      *
      * @method getItem
      * @param {String} selector
+     * @return {Node}
      */
     getItem: function(selector) {
         return this._toolbar.one(selector);
