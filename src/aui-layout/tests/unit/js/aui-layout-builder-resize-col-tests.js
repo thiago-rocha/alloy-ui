@@ -335,16 +335,19 @@ YUI.add('aui-layout-builder-resize-col-tests', function(Y) {
 
         'should have a number of handles consistent with the number of rows': function() {
             var dragHandles,
-                firstRow;
+                firstRow,
+                i = 0;
 
             firstRow = this._layoutBuilder.get('layout').get('rows')[0];
 
             while (firstRow.get('cols').length < firstRow.get('maximumCols')) {
-                    firstRow.addCol(undefined, new Y.LayoutCol({
+                    firstRow.addCol(i, new Y.LayoutCol({
                     value: { content: '' },
                     removable: false,
                     size: 1
                 }));
+
+                i++;
             }
 
             dragHandles = firstRow.get('node').all('.' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + ':not(.hide)');
@@ -479,40 +482,65 @@ YUI.add('aui-layout-builder-resize-col-tests', function(Y) {
         },
 
         'should destroy removable first column': function() {
-            var row = Y.one('.row'),
-                cols = row.all('.col'),
+            var breakpoint,
+                breakpointToAdding,
+                cols,
                 dragHandle,
-                breakpoint,
-                addColButton = row.one('.layout-builder-add-col');
+                handleAddColumn,
+                layout = this._layoutBuilder.get('layout'),
+                row = Y.one('.row'),
+                self = this;
+
+            cols = row.all('.col');
+
+            this._layoutBuilder.set('enableAddCols', true);
+
+            handleAddColumn = row.one('.layout-builder-resize-col-draggable-handle.expand-left');
+            breakpointToAdding = row.all('.' + CSS_RESIZE_COL_BREAKPOINT).item(1);
 
             Assert.areEqual(true, cols.item(0).getData('layout-col').get('removable'));
 
-            addColButton.simulate('click');
+            this._simulateDragToBreakpoint(this, handleAddColumn, breakpointToAdding, function() {
+                dragHandle = row.all('.layout-builder-resize-col-draggable-handle').item(2);
+                breakpoint = row.all('.' + CSS_RESIZE_COL_BREAKPOINT).item(0);
 
-            dragHandle = row.all('.layout-builder-resize-col-draggable-handle').item(0);
-            breakpoint = row.all('.' + CSS_RESIZE_COL_BREAKPOINT).item(0);
+                Assert.areEqual(layout.get('rows')[0].get('cols').length, 5);
 
-            this._simulateDragToBreakpoint(this, dragHandle, breakpoint, function() {
-                Assert.areEqual(3, cols.item(0).getData('layout-col').get('size'));
+                self._simulateDragToBreakpoint(self, dragHandle, breakpoint, function() {
+                    Assert.areEqual(layout.get('rows')[0].get('cols').length, 4);
+                });
             });
         },
 
         'should destroy removable second column': function() {
-            var row = Y.one('.row'),
-                cols = row.all('.col'),
+            var breakpoint,
+                breakpointToAdding,
+                cols,
                 dragHandle,
-                breakpoint,
-                addColButton = row.all('.layout-builder-add-col').item(1);
+                handleAddColumn,
+                layout = this._layoutBuilder.get('layout'),
+                row = Y.one('.row'),
+                instance = this;
+
+            cols = row.all('.col');
+
+            this._layoutBuilder.set('enableAddCols', true);
 
             Assert.areEqual(true, cols.item(0).getData('layout-col').get('removable'));
+            Assert.areEqual(4, cols._nodes.length);
 
-            addColButton.simulate('click');
+            handleAddColumn = row.one('.layout-builder-resize-col-draggable-handle.expand-right');
+            breakpointToAdding = row.all('.' + CSS_RESIZE_COL_BREAKPOINT).item(11);
 
-            dragHandle = row.all('.layout-builder-resize-col-draggable-handle').item(3);
-            breakpoint = row.all('.' + CSS_RESIZE_COL_BREAKPOINT).item(12);
+            instance._simulateDragToBreakpoint(instance, handleAddColumn, breakpointToAdding, function() {
+                dragHandle = row.all('.layout-builder-resize-col-draggable-handle').item(5);
+                breakpoint = row.all('.' + CSS_RESIZE_COL_BREAKPOINT).item(12);
 
-            this._simulateDragToBreakpoint(this, dragHandle, breakpoint, function() {
-                Assert.areEqual(3, cols.item(0).getData('layout-col').get('size'));
+                Assert.areEqual(layout.get('rows')[0].get('cols').length, 5);
+
+                instance._simulateDragToBreakpoint(instance, dragHandle, breakpoint, function() {
+                    Assert.areEqual(layout.get('rows')[0].get('cols').length, 4);
+                }); 
             });
         },
 

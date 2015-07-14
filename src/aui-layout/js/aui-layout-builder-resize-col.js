@@ -11,7 +11,9 @@ var BREAKPOINTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     CSS_RESIZE_COL_DRAGGABLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable'),
     CSS_RESIZE_COL_DRAGGABLE_BORDER = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'border'),
     CSS_RESIZE_COL_DRAGGABLE_HANDLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'handle'),
+    CSS_RESIZE_COL_DRAGGABLE_HANDLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'handle'),
     MAX_SIZE = 12,
+    ADD_COLUMN_ACTION = 'addColumn',
     SELECTOR_ROW = '.layout-row';
 
 /**
@@ -94,7 +96,12 @@ A.LayoutBuilderResizeCol.prototype = {
         var dragNode = this._delegateDrag.get('lastNode'),
             row = dragNode.ancestor(SELECTOR_ROW);
 
-        this._resize(dragNode);
+        if (dragNode.getData('layout-action') && dragNode.getData('layout-action') === 'addColumn') {
+            this._insertColumnAfterDropHandles(dragNode);
+        }
+        else {
+            this._resize(dragNode);
+        }
 
         if (row) {
             this._hideBreakpoints(row);
@@ -103,6 +110,8 @@ A.LayoutBuilderResizeCol.prototype = {
         this._syncDragHandles();
 
         this.get('layout').normalizeColsHeight(new A.NodeList(row));
+
+        dragNode.show();
     },
 
     /**
@@ -277,10 +286,24 @@ A.LayoutBuilderResizeCol.prototype = {
         var col1 = dragNode.getData('layout-col1'),
             col2 = dragNode.getData('layout-col2'),
             difference = position - dragNode.getData('layout-position'),
-            diff1 = col1.get('size') + difference,
-            diff2 = col2.get('size') - difference,
-            col1MinSize = col1.get('minSize'),
-            col2MinSize = col2.get('minSize');
+            diff1,
+            diff2,
+            col1MinSize,
+            col2MinSize;
+
+        if (dragNode.getData('layout-action') === ADD_COLUMN_ACTION) {
+            if ((col2 && difference < col2.get('size')) ||
+                (col1 && MAX_SIZE - col1.get('size') < position)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        diff1 = col1.get('size') + difference,
+        diff2 = col2.get('size') - difference,
+        col1MinSize = col1.get('minSize'),
+        col2MinSize = col2.get('minSize');
 
         if (diff1 !== 0 && diff2 !== 0 && (diff1 < col1MinSize || diff2 < col2MinSize)) {
             return false;
@@ -456,7 +479,7 @@ A.LayoutBuilderResizeCol.prototype = {
      * @protected
      */
     _removeDragHandles: function() {
-        this._layoutContainer.all('.' + CSS_RESIZE_COL_DRAGGABLE).remove();
+        this._layoutContainer.all('.' + CSS_RESIZE_COL_DRAGGABLE + ':not(.layout-builder-add-col-draggable)').remove();
     },
 
     /**
@@ -529,6 +552,37 @@ A.LayoutBuilderResizeCol.prototype = {
     },
 
     /**
+     * Add new column for the given layout row after drop handler.
+     *
+     * @method _insertColumnAfterDropHandles
+     * @param {A.LayoutRow} dragNode
+     * @protected
+     */
+     _insertColumnAfterDropHandles: function(dragNode){
+        var colLayoutPosition = this._lastDropEnter.getData('layout-position'),
+            dragPosition = dragNode.getData('layout-position'),
+            newCol = new A.LayoutCol(),
+            newColPosition,
+            newColumnSize = Math.abs(dragPosition - colLayoutPosition),
+            row = dragNode.ancestor(SELECTOR_ROW).getData('layout-row'),
+            rowColsLength = row.get('cols').length,
+            isInsideTheTable = (colLayoutPosition > 0 && colLayoutPosition < 12);
+
+        if (dragPosition === 0) {
+            newColPosition = 0;
+        }
+        else {
+            newColPosition = rowColsLength;
+        }
+
+        newCol.set('size', newColumnSize);
+
+        if (isInsideTheTable) {
+            row.addCol(newColPosition, newCol);
+        }
+    },
+
+    /**
      * Updates the drag handles for the given layout row.
      *
      * @method _syncRowDragHandles
@@ -537,12 +591,13 @@ A.LayoutBuilderResizeCol.prototype = {
      */
     _syncRowDragHandles: function(row) {
         var cols = row.get('cols'),
+            numberOfCols = cols.length,
             currentPos = 0,
             draggable,
             index,
             rowNode = row.get('node').one(SELECTOR_ROW);
 
-        for (index = 0; index < cols.length - 1; index++) {
+        for (index = 0; index < numberOfCols - 1; index++) {
             currentPos += cols[index].get('size');
 
             draggable = A.Node.create(this.TPL_RESIZE_COL_DRAGGABLE);
