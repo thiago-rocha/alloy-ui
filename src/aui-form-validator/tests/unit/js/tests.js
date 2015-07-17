@@ -190,6 +190,48 @@ YUI.add('aui-form-validator-tests', function(Y) {
             Y.Assert.isFalse(validator.hasErrors());
         },
 
+        /*
+         * Check if validator correctly validates dates in pt-br format dd/MM/yyyy
+         * @tests AUI-1940
+         */
+          'test date format': function() {
+            var form = Y.Node.create('<form><input name="date" id="date" type="text"></form>'),
+                input = form.one('input'),
+                validator;
+
+            validator = new Y.FormValidator({
+                boundingBox: form,
+                rules: {
+                    date: {
+                     required: true,
+                     date: true
+                         }
+                }
+            });
+
+            form.simulate('submit');
+
+            Y.Assert.isTrue(validator.hasErrors());
+
+            input.attr('value', '05/25/2016');
+
+            form.simulate('submit');
+
+            Y.Assert.isFalse(validator.hasErrors());
+
+            input.attr('value', '26/06/2016');
+
+            form.simulate('submit');
+
+            Y.Assert.isFalse(validator.hasErrors());
+
+            input.attr('value', '26/26/2016');
+
+            form.simulate('submit');
+
+            Y.Assert.isTrue(validator.hasErrors());
+        },
+
         _assertValidatorNextLabel: function(input) {
             var inputNode,
                 textNode;
