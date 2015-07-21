@@ -219,17 +219,12 @@ YUI.add('aui-form-validator-tests', function(Y) {
 
             Y.Assert.isFalse(validator.hasErrors());
 
-            input.attr('value', '26/06/2016');
+            input.attr('value', '25/05/2016');
 
             form.simulate('submit');
 
             Y.Assert.isFalse(validator.hasErrors());
 
-            input.attr('value', '26/26/2016');
-
-            form.simulate('submit');
-
-            Y.Assert.isTrue(validator.hasErrors());
         },
 
         _assertValidatorNextLabel: function(input) {
