@@ -12,6 +12,7 @@ No changes.
 
 ## [3.0.0](https://github.com/liferay/alloy-ui/releases/tag/3.0.0)
 
+* [AUI-1940](https://issues.liferay.com/browse/AUI-1940) Date format validation does not work for the brazilian locale 'dd/MM/yyyy'
 * [AUI-1585](https://issues.liferay.com/browse/AUI-1585) aui-form-validator error breaks radio button layout
 * [AUI-1356](https://issues.liferay.com/browse/AUI-1356) Make aui-form-validator accessible
 * [AUI-1378](https://issues.liferay.com/browse/AUI-1378) Fix error validation message on radio button field-1244) Use .form-control instead of .control-group on Bootstrap 3
@@ -22,3 +23,4 @@ No changes.
 ## [2.5.0](https://github.com/liferay/alloy-ui/releases/tag/2.5.0)
 
 * [AUI-1163](https://issues.liferay.com/browse/AUI-1163) Remove unnecessary constants
+
