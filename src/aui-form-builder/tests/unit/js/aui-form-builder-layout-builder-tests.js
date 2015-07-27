@@ -222,8 +222,9 @@ YUI.add('aui-form-builder-layout-builder-tests', function(Y) {
             var button;
 
             this._createFormBuilder();
+            this._formBuilder._layoutBuilder.set('enableAddCols', true);
 
-            button = this._formBuilder.get('contentBox').one('.layout-builder-add-col');
+            button = this._formBuilder.get('contentBox').one('.layout-builder-resize-col-draggable-handle.expand-left');
             Y.Assert.isNotNull(button);
         },
 
@@ -552,7 +553,7 @@ YUI.add('aui-form-builder-layout-builder-tests', function(Y) {
             this._formBuilder = new Y.FormBuilder().render('#container');
             layout = this._formBuilder.get('layouts')[0];
 
-            Y.one('.layout-builder-add-col').simulate('click');
+            layout.get('rows')[0].addCol();
 
             Y.Assert.areEqual(2, layout.get('rows').length);
             Y.Assert.areEqual(1, layout.get('rows')[1].get('cols').length);
