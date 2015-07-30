@@ -280,6 +280,7 @@ A.LayoutBuilderResizeCol.prototype = {
      * @method _canDrop
      * @param {Node} dragNode
      * @param {Number} position
+     * @return {Boolean}
      * @protected
      */
     _canDrop: function(dragNode, position) {
@@ -558,7 +559,7 @@ A.LayoutBuilderResizeCol.prototype = {
      * @param {A.LayoutRow} dragNode
      * @protected
      */
-     _insertColumnAfterDropHandles: function(dragNode){
+     _insertColumnAfterDropHandles: function(dragNode) {
         var colLayoutPosition = this._lastDropEnter.getData('layout-position'),
             dragPosition = dragNode.getData('layout-position'),
             newCol = new A.LayoutCol(),

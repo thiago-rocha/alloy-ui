@@ -285,7 +285,7 @@ YUI.add('aui-layout-row-tests', function(Y) {
             Assert.areEqual(childNumber, 4);
         },
 
-        'should be able to add a col using the _insertCol method': function() {
+        'should be able to add a col using the addCol method': function() {
             var childNumber,
                 row = this.layoutRow,
                 newCol = new Y.LayoutCol({

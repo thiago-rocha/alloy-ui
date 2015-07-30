@@ -336,18 +336,18 @@ YUI.add('aui-layout-builder-resize-col-tests', function(Y) {
         'should have a number of handles consistent with the number of rows': function() {
             var dragHandles,
                 firstRow,
-                i = 0;
+                index = 0;
 
             firstRow = this._layoutBuilder.get('layout').get('rows')[0];
 
             while (firstRow.get('cols').length < firstRow.get('maximumCols')) {
-                    firstRow.addCol(i, new Y.LayoutCol({
+                    firstRow.addCol(index, new Y.LayoutCol({
                     value: { content: '' },
                     removable: false,
                     size: 1
                 }));
 
-                i++;
+                index++;
             }
 
             dragHandles = firstRow.get('node').all('.' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + ':not(.hide)');
@@ -489,7 +489,7 @@ YUI.add('aui-layout-builder-resize-col-tests', function(Y) {
                 handleAddColumn,
                 layout = this._layoutBuilder.get('layout'),
                 row = Y.one('.row'),
-                self = this;
+                instance = this;
 
             cols = row.all('.col');
 
@@ -506,7 +506,7 @@ YUI.add('aui-layout-builder-resize-col-tests', function(Y) {
 
                 Assert.areEqual(layout.get('rows')[0].get('cols').length, 5);
 
-                self._simulateDragToBreakpoint(self, dragHandle, breakpoint, function() {
+                instance._simulateDragToBreakpoint(instance, dragHandle, breakpoint, function() {
                     Assert.areEqual(layout.get('rows')[0].get('cols').length, 4);
                 });
             });
