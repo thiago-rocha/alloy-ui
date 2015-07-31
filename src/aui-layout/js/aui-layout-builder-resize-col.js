@@ -279,16 +279,17 @@ A.LayoutBuilderResizeCol.prototype = {
      * @method _canDrop
      * @param {Node} dragNode
      * @param {Number} position
+     * @return {Boolean}
      * @protected
      */
     _canDrop: function(dragNode, position) {
         var col1 = dragNode.getData('layout-col1'),
             col2 = dragNode.getData('layout-col2'),
-            difference = position - dragNode.getData('layout-position'),
+            col1MinSize,
+            col2MinSize,
             diff1,
             diff2,
-            col1MinSize,
-            col2MinSize;
+            difference = position - dragNode.getData('layout-position');
 
         if (dragNode.getData('layout-action') === ADD_COLUMN_ACTION) {
             if ((col2 && difference < col2.get('size')) ||

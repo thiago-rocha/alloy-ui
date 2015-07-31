@@ -181,6 +181,16 @@ A.LayoutBuilderAddCol.prototype = {
     },
 
     /**
+     * Removes all add col buttons.
+     *
+     * @method _removeAddColButton
+     * @protected
+     */
+    _removeAddColButton: function() {
+        this._layoutContainer.all('.' + CSS_ADD_COL_DRAGGABLE).remove();
+    },
+
+    /**
      * Updates the UI according to the value of the `enableAddCols` attribute.
      *
      * @method _uiSetEnableAddCols
@@ -196,16 +206,6 @@ A.LayoutBuilderAddCol.prototype = {
             this._removeAddColButton();
             this._unbindAddColEvents();
         }
-    },
-
-    /**
-     * Removes all add col buttons.
-     *
-     * @method _removeAddColButton
-     * @protected
-     */
-    _removeAddColButton: function() {
-        this._layoutContainer.all('.' + CSS_ADD_COL_DRAGGABLE).remove();
     },
 
     /**
@@ -232,20 +232,19 @@ A.LayoutBuilderAddCol.prototype = {
  */
 A.LayoutBuilderAddCol.ATTRS = {
     /**
-     * Flag indicating if the feature of adding columns to the layout is
-     * enabled or not.
+     * Class name to the add handler on the left side of the layout
      *
-     * @attribute enableAddCols
-     * @default true
-     * @type {Boolean}
+     * @attribute addButtonLeftClass
+     * @default "glyphicon glyphicon-hand-right"
+     * @type {String}
      */
-    enableAddCols: {
-        validator: A.Lang.isBoolean,
-        value: true
+    addButtonLeftClass: {
+        validator: A.Lang.isString,
+        value: 'glyphicon glyphicon-hand-right'
     },
 
     /**
-     * Class name to the add handler on the right
+     * Class name to the add handler on the right side of the layout
      *
      * @attribute addButtonRightClass
      * @default "glyphicon glyphicon-hand-left"
@@ -257,14 +256,15 @@ A.LayoutBuilderAddCol.ATTRS = {
     },
 
     /**
-     * Class name to the add handler on the left
+     * Flag indicating if the feature of adding columns to the layout is
+     * enabled or not.
      *
-     * @attribute addButtonLeftClass
-     * @default "glyphicon glyphicon-hand-right"
-     * @type {String}
+     * @attribute enableAddCols
+     * @default true
+     * @type {Boolean}
      */
-    addButtonLeftClass: {
-        validator: A.Lang.isString,
-        value: 'glyphicon glyphicon-hand-right'
+    enableAddCols: {
+        validator: A.Lang.isBoolean,
+        value: true
     }
 };
