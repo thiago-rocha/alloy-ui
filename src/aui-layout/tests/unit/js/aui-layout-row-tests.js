@@ -8,10 +8,10 @@ YUI.add('aui-layout-row-tests', function(Y) {
         name: 'Layout Row Tests',
 
         setUp: function() {
-            this._createLayoutBuilder();
+            this._createLayoutCol();
         },
 
-        _createLayoutBuilder: function(config) {
+        _createLayoutCol: function(config) {
             var layoutRow;
             
             col = new Y.LayoutCol({
@@ -108,7 +108,7 @@ YUI.add('aui-layout-row-tests', function(Y) {
             var childNumber,
                 row;
 
-            this._createLayoutBuilder({
+            this._createLayoutCol({
                 cols: []
             });
 
@@ -127,7 +127,7 @@ YUI.add('aui-layout-row-tests', function(Y) {
             var currentColsSize,
                 maximumCols;
 
-            this._createLayoutBuilder({
+            this._createLayoutCol({
                 cols: []
             });
 
@@ -323,7 +323,7 @@ YUI.add('aui-layout-row-tests', function(Y) {
             var layoutRow,
                 cols;
 
-            this._createLayoutBuilder( {
+            this._createLayoutCol( {
                 cols: [
                     new Y.LayoutCol({
                         size: 1,
