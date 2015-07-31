@@ -279,6 +279,7 @@ A.LayoutBuilderResizeCol.prototype = {
      * @method _canDrop
      * @param {Node} dragNode
      * @param {Number} position
+     * @return {Boolean}
      * @protected
      */
     _canDrop: function(dragNode, position) {

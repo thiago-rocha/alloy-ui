@@ -45,15 +45,13 @@ A.LayoutRow = A.Base.create('layout-row', A.Base, [], {
      */
     addCol: function(index, col) {
         var cols = this.get('cols').concat(),
-            i = index;
+            insertIndex = index;
 
         if (A.Lang.isUndefined(index)) {
-            i = cols.length;
-            col = new A.LayoutCol();
+            insertIndex = cols.length;
         }
-
-        if (A.instanceOf(index, A.LayoutCol)) {
-            i = cols.length;
+        else if (A.instanceOf(index, A.LayoutCol)) {
+            insertIndex = cols.length;
             col = index;
         }
 
@@ -61,13 +59,13 @@ A.LayoutRow = A.Base.create('layout-row', A.Base, [], {
             col = new A.LayoutCol();
         }
 
-        if (i > cols.length) {
-            i = cols.length;
+        if (insertIndex > cols.length) {
+            insertIndex = cols.length;
         }
 
-        cols.splice(i, 0, col);
+        cols.splice(insertIndex, 0, col);
 
-        cols = this._resizeColsAfterAdding(cols, i);
+        cols = this._resizeColsAfterAdding(cols, insertIndex);
 
         this.set('cols', cols);
     },
@@ -146,6 +144,7 @@ A.LayoutRow = A.Base.create('layout-row', A.Base, [], {
      */
     _removeColByIndex: function(index) {
         var cols = this.get('cols').concat();
+
         cols.splice(index, 1);
         cols = this._resizeColsAfterRemoving(cols, index);
         this.set('cols', cols);
@@ -173,6 +172,7 @@ A.LayoutRow = A.Base.create('layout-row', A.Base, [], {
      * @method _resizeColsAfterRemoving
      * @param {Array} cols Columns to be resized.
      * @param {Number} index Column index reference.
+     * @return {Array} Columns resized.
      * @protected
      */
     _resizeColsAfterRemoving: function(cols, index) {
@@ -252,6 +252,7 @@ A.LayoutRow = A.Base.create('layout-row', A.Base, [], {
      * @method _expandNeighborColsWidth
      * @param {Array} cols Columns to be resized
      * @param {Number} size Size to shared between the columns
+     * will be increase or decrease
      * @protected
      */
     _expandNeighborColsWidth: function(cols, size) {
