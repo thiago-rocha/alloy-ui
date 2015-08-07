@@ -358,7 +358,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         this._updateUniqueFieldType();
 
         if (this.get('rendered')) {
-            pages = this._getPages();
+            pages = this.get('pages');
 
             pages.set('activePageNumber', 1);
             pages.set('pagesQuantity', this.get('layouts').length);
@@ -388,28 +388,28 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
      * @protected
      */
     _getActiveLayoutIndex: function() {
-        return this.get('rendered') ? this._getPages().get('activePageNumber') - 1: 0;
+        return this.get('rendered') ? this.get('pages').get('activePageNumber') - 1: 0;
     },
 
     /**
-     * Returns the form builder pages instance.
-     *
-     * @method _getPages
+     * Form Builder Pages instance initializer. Receives a custom
+     * object of configurations or using default configurations instead.
+     * 
+     * @method _getPagesInstance
+     * @param {Object} config
      * @return {A.FormBuilderPages}
      * @protected
      */
-    _getPages: function() {
-        var contentBox;
+    _getPagesInstance: function(config) {
+        var contentBox = this.get('contentBox');
 
         if (!this._pages) {
-            contentBox = this.get('contentBox');
-
-            this._pages = new A.FormBuilderPages({
+            this._pages = new A.FormBuilderPages(A.merge({
                 pageHeader: contentBox.one('.' + CSS_PAGE_HEADER),
                 pagesQuantity: this.get('layouts').length,
                 paginationContainer: contentBox.one('.' + CSS_PAGES),
                 tabviewContainer: contentBox.one('.' + CSS_TABS)
-            });
+            }, config));
 
             this._eventHandles.push(
                 this._pages.on('add', A.bind(this._addPage, this)),
@@ -674,6 +674,16 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
             valueFn: function() {
                 return [new A.Layout()];
             }
+        },
+
+        /**
+         * A Form Builder Pages instance.
+         *
+         * @attribute pages
+         * @type {A.FormBuilderPages} 
+         */
+        pages: {
+            getter: '_getPagesInstance'
         },
 
         /**
