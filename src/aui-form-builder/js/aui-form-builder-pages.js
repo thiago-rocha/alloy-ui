@@ -581,6 +581,10 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Base, [], {
             writeOnce: true
         },
 
+        paginationType: {
+
+        },
+
         /**
          * Collection of strings used to label elements of the UI. To Untitled Page text,
          * the string used should follow this have placeholder to Active Page Number and
