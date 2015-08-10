@@ -97,10 +97,12 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Base, [], {
 
         this.after({
             activePageNumberChange: this._afterActivePageNumberChange,
-            pagesQuantityChange: this._afterPagesQuantityChange
+            pagesQuantityChange: this._afterPagesQuantityChange,
+            paginationTypeChange: this._afterPaginationTypeChange
         });
 
         this._uiSetActivePageNumber(this.get('activePageNumber'));
+        this._uiSetPaginationType(this.get('paginationType'));
     },
 
     /**
@@ -191,6 +193,16 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Base, [], {
      */
     _afterPagesQuantityChange: function() {
         this._uiSetPagesQuantity(this.get('pagesQuantity'));
+    },
+
+    /**
+     * Fired after the `paginationType` attribute changes.
+     *
+     * @method _afterPaginationTypeChange
+     * @protected
+     */
+    _afterPaginationTypeChange: function() {
+        this._uiSetPaginationType(this.get('paginationType'));
     },
 
     /**
@@ -399,15 +411,12 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Base, [], {
      * @protected
      */
     _onSwitchViewClick: function() {
-        var activePageNumber = this.get('activePageNumber'),
-            pagination = this._getPagination(),
-            tabview = this._getTabView();
-
-        pagination.get('contentBox').toggleView();
-        tabview.get('contentBox').toggleView();
-
-        pagination.set('page', activePageNumber);
-        tabview.selectChild(activePageNumber - 1);
+        if (this.get('paginationType') === 'pagination') {
+            this.set('paginationType', 'tabs');
+        }
+        else {
+            this.set('paginationType', 'pagination');
+        }
     },
 
     /**
@@ -495,6 +504,24 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Base, [], {
         this._uiSetActivePageNumber(activePageNumber);
     },
 
+    _uiSetPaginationType: function(type) {
+        var activePageNumber = this.get('activePageNumber'),
+            pagination = this._getPagination(),
+            tabview = this._getTabView();
+
+        if (type === 'tabs') {
+            pagination.get('contentBox').hide();
+            tabview.get('contentBox').show();
+        }
+        else {
+            pagination.get('contentBox').show();
+            tabview.get('contentBox').hide();
+        }
+
+        pagination.set('page', activePageNumber);
+        tabview.selectChild(activePageNumber - 1);
+    },
+
 
     /**
      * Update all tabs title based on titles attribute.
@@ -579,6 +606,17 @@ A.FormBuilderPages = A.Base.create('form-builder-pages', A.Base, [], {
         paginationContainer: {
             setter: A.one,
             writeOnce: true
+        },
+
+        /**
+         * Type of the pagination.
+         *
+         * @attribute paginationType
+         * @default 'pagination'
+         * @type {String}
+         */
+        paginationType: {
+            value: 'pagination'
         },
 
         /**
