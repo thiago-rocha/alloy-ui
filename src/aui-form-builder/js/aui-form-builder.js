@@ -358,7 +358,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         this._updateUniqueFieldType();
 
         if (this.get('rendered')) {
-            pages = this._getPages();
+            pages = this.get('pages');
 
             pages.set('activePageNumber', 1);
             pages.set('pagesQuantity', this.get('layouts').length);
@@ -388,38 +388,7 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
      * @protected
      */
     _getActiveLayoutIndex: function() {
-        return this.get('rendered') ? this._getPages().get('activePageNumber') - 1: 0;
-    },
-
-    /**
-     * Returns the form builder pages instance.
-     *
-     * @method _getPages
-     * @return {A.FormBuilderPages}
-     * @protected
-     */
-    _getPages: function() {
-        var contentBox;
-
-        if (!this._pages) {
-            contentBox = this.get('contentBox');
-
-            this._pages = new A.FormBuilderPages({
-                pageHeader: contentBox.one('.' + CSS_PAGE_HEADER),
-                pagesQuantity: this.get('layouts').length,
-                paginationContainer: contentBox.one('.' + CSS_PAGES),
-                tabviewContainer: contentBox.one('.' + CSS_TABS)
-            });
-
-            this._eventHandles.push(
-                this._pages.on('add', A.bind(this._addPage, this)),
-                this._pages.on('remove', A.bind(this._removeLayout, this)),
-                this._pages.after('activePageNumberChange', A.bind(this._afterActivePageNumberChange, this)),
-                this._pages.after('updatePageContent', A.bind(this._afterUpdatePageContentChange, this))
-            );
-        }
-
-        return this._pages;
+        return this.get('rendered') ? this.get('pages').get('activePageNumber') - 1: 0;
     },
 
     /**
@@ -541,6 +510,36 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         this._newFieldContainer = target.ancestor('.col').getData('layout-col');
 
         this.showFieldsPanel();
+    },
+
+    /**
+     * Form Builder Pages instance initializer resiving custom 
+     * options object or using default options instead.
+     * 
+     * @method _setPagesInstance
+     * @param {Object} options
+     * @protected
+     */
+    _setPagesInstance: function(options) {
+        var contentBox = this.get('contentBox');
+
+        if (!this._pages) {
+            this._pages = new A.FormBuilderPages(A.merge({
+                pageHeader: contentBox.one('.' + CSS_PAGE_HEADER),
+                pagesQuantity: this.get('layouts').length,
+                paginationContainer: contentBox.one('.' + CSS_PAGES),
+                tabviewContainer: contentBox.one('.' + CSS_TABS)
+            }, options));
+
+            this._eventHandles.push(
+                this._pages.on('add', A.bind(this._addPage, this)),
+                this._pages.on('remove', A.bind(this._removeLayout, this)),
+                this._pages.after('activePageNumberChange', A.bind(this._afterActivePageNumberChange, this)),
+                this._pages.after('updatePageContent', A.bind(this._afterUpdatePageContentChange, this))
+            );
+        }
+
+        return this._pages;
     },
 
     /**
@@ -674,6 +673,17 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
             valueFn: function() {
                 return [new A.Layout()];
             }
+        },
+
+        /**
+         * Returns the Form Builder Pages instance.
+         *
+         * @attribute pages
+         * @return {A.FormBuilderPages}
+         * @type {Object}
+         */
+        pages: {
+            getter: '_setPagesInstance'
         },
 
         /**

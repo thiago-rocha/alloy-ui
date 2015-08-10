@@ -260,6 +260,20 @@ YUI.add('aui-form-builder-pages-tests', function(Y) {
                     Y.Assert.areEqual('An aditional info about this page', descriptionNode.get('placeholder'));
                 });
             });
+        },
+
+        'should initialize with pagination tabs if the default option was replaced': function() {
+            this.createFormBuilderPages({
+                activePageNumber: 1,
+                pageHeader: '#header',
+                pagesQuantity: 1,
+                paginationContainer: '#pages',
+                tabviewContainer: '#tabs',
+                paginationType: 'tabs'
+            });
+
+            Y.Assert.isFalse(Y.one('.tabbable-content').hasClass('hide'));
+            Y.Assert.isTrue(Y.one('.pagination-content').hasClass('hide'));
         }
     }));
 
