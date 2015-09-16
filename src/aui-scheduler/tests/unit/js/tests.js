@@ -672,8 +672,7 @@ YUI.add('aui-scheduler-tests', function(Y) {
                 overlayRect.right <= schedulerRect.right,
                 'The right of the events overlay should come before the right of the scheduler.'
             );
-        },
-
+        }
     }));
 
     Y.Test.Runner.add(suite);
