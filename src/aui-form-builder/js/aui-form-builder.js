@@ -47,8 +47,6 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
      * @protected
      */
     initializer: function() {
-        this._buidUI();
-
         this._fieldToolbar = new A.FormBuilderFieldToolbar(this.get('fieldToolbarConfig'));
 
         this._eventHandles = [
@@ -73,6 +71,8 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
         layoutButtonNode = A.Lang.sub(this.TPL_EDIT_LAYOUT_BUTTON, {
             editLayout: this.get('strings').titleOnEditLayoutMode
         });
+
+        this._buildUI();
 
         this.getActiveLayout().addTarget(this);
 
@@ -376,16 +376,20 @@ A.FormBuilder = A.Base.create('form-builder', A.Widget, [
     },
 
     /**
-     * Render the form builder UI parts
+     * Render the form builder UI parts.
      *
-     * @method _buidUI
+     * @method _buildUI
      * @protected
      */
-    _buidUI: function() {
-        var contentBox = this.get('contentBox'),
-            headerTemplate = A.Lang.sub(this.TPL_HEADER, {
-                formTitle: this.get('strings').formTitle
-            });
+    _buildUI: function() {
+        var contentBox,
+            headerTemplate;
+
+        contentBox = this.get('contentBox');
+
+        headerTemplate = A.Lang.sub(this.TPL_HEADER, {
+            formTitle: this.get('strings').formTitle
+        });
 
         contentBox.append(headerTemplate);
         contentBox.append(this.TPL_PAGE_HEADER);
