@@ -80,6 +80,7 @@
 .form-builder-menu .menu-item .form-builder-edit-layout-button a {
     color: #fff;
 }
+
 .form-builder-modal {
     margin: 0;
     width: 300px;
@@ -180,11 +181,6 @@
     border-right: 1px dotted transparent;
 }
 
-.form-builder-layout .layout-row {
-    border-top: 1px dotted transparent;
-    border-bottom: 1px dotted transparent;
-}
-
 .form-builder-layout .layout-row .layout-builder-resize-col-draggable {
     opacity: 0;
 }
@@ -200,12 +196,13 @@
 }
 
 .form-builder-layout .layout-row {
+    border-top: 1px dotted transparent;
+    border-bottom: 1px dotted transparent;
     margin: 0;
 }
 
 .form-builder-layout .layout-row .col {
     background-color: #fff;
-    min-height: 260px;
     padding: 0;
 }
 
@@ -215,6 +212,16 @@
 
 .form-builder-content .layout-builder-add-row {
     display: none;
+}
+
+.form-builder-layout .layout-col-content {
+    padding-left: 32pt;
+    padding-right: 32pt;
+}
+
+.form-builder-layout .form-field {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 @media (max-width: 768px) {
