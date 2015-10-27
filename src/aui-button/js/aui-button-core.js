@@ -6,6 +6,7 @@
 
 var Lang = A.Lang,
     isArray = Lang.isArray,
+    isBoolean = Lang.isBoolean,
     isNumber = Lang.isNumber,
     isString = Lang.isString,
     isUndefined = Lang.isUndefined,
@@ -50,11 +51,24 @@ ButtonExt.ATTRS = {
      * CSS class to be automatically added to the `boundingBox`.
      *
      * @attribute cssClass
-     * @type String
+     * @type {String}
      */
     cssClass: {
         validator: isString,
-        value: CLASS_NAMES.BUTTON_DEFAULT
+        value: ''
+    },
+
+    /**
+     * Defines if the button will discard the default button classes.
+     *
+     * @attribute discardDefaultButtonCssClasses
+     * @default false
+     * @type {Boolean}
+     */
+    discardDefaultButtonCssClasses: {
+        validator: isBoolean,
+        value: false,
+        writeOnce: true
     },
 
     /**
@@ -149,11 +163,29 @@ ButtonExt.prototype = {
     initializer: function() {
         var instance = this;
 
+        instance.before(instance.renderButtonExtUI, instance, 'renderUI');
         instance.after(instance.syncButtonExtUI, instance, 'syncUI');
         instance.after({
             iconChange: instance._afterIconChange,
             iconAlignChange: instance._afterIconAlignChange
         });
+    },
+
+    /**
+     * Includes default button classes if necessary.
+     * Fires after `renderUI` method. 
+     *
+     * @method renderButtonExtUI
+     * @protected
+     */
+    renderButtonExtUI: function() {
+        var instance = this,
+            cssClass = instance.get('cssClass');
+
+        if (!instance.get('discardDefaultButtonCssClasses')) {
+            cssClass = [cssClass, CLASS_NAMES.BUTTON_DEFAULT, CLASS_NAMES.BUTTON].join(' ');
+            instance.set('cssClass', cssClass);
+        }
     },
 
     /**
@@ -280,9 +312,9 @@ A.ButtonCore.CLASS_NAMES = CLASS_NAMES;
 
 var Button = A.Button;
 
-Button.NAME = 'btn';
+Button.NAME = 'aui-button';
 
-Button.CSS_PREFIX = CLASS_NAMES.BUTTON;
+Button.CSS_PREFIX = 'aui-button';
 
 Button.CLASS_NAMES = CLASS_NAMES;
 
