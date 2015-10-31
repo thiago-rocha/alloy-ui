@@ -120,8 +120,9 @@ YUI({ filter:'raw' }).use(
                 })
             ]
         });
-
-        new Y.FormBuilder({
+A = Y;
+        form = new Y.FormBuilder({
+            coco: 3,
             fieldTypes: [{
                 fieldClass: Y.FormBuilderFieldSentence,
                 icon:'glyphicon glyphicon-font',
