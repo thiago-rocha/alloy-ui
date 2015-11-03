@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-2037](https://issues.liferay.com/browse/AUI-2037) validateField() does not reset error states for fields no longer in the DOM, preventing form submission
 * [AUI-1958](https://issues.liferay.com/browse/AUI-1958) When custom and default validators are used together the validators show errors without setting a value in the field
 
 ## [3.0.1](https://github.com/liferay/alloy-ui/releases/tag/3.0.1)
