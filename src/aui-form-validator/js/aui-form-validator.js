@@ -13,6 +13,7 @@ var Lang = A.Lang,
     isDate = Lang.isDate,
     isEmpty = AObject.isEmpty,
     isFunction = Lang.isFunction,
+    isNode = Lang.isNode,
     isObject = Lang.isObject,
     isString = Lang.isString,
     trim = Lang.trim,
@@ -602,12 +603,16 @@ var FormValidator = A.Component.create({
          * Deletes the field from the errors property object.
          *
          * @method clearFieldError
-         * @param {Node} field
+         * @param {Node|String} field
          */
         clearFieldError: function(field) {
             var instance = this;
 
-            delete instance.errors[field.get('name')];
+            var fieldName = isNode(field) ? field.get('name') : field;
+
+            if (isString(fieldName)) {
+                delete instance.errors[fieldName];
+            }
         },
 
         /**
@@ -872,9 +877,7 @@ var FormValidator = A.Component.create({
 
             instance.eachRule(
                 function(rule, fieldName) {
-                    var field = instance.getField(fieldName);
-
-                    instance.resetField(field);
+                    instance.resetField(fieldName);
                 }
             );
         },
@@ -883,15 +886,22 @@ var FormValidator = A.Component.create({
          * Resets the CSS class and error status of a field.
          *
          * @method resetField
-         * @param {Node} field
+         * @param {Node|String} field
          */
         resetField: function(field) {
-            var instance = this,
-                stackContainer = instance.getFieldStackErrorContainer(field);
+            var instance = this;
 
-            stackContainer.remove();
-            instance.resetFieldCss(field);
             instance.clearFieldError(field);
+
+            var fieldNode = isString(field) ? instance.getField(field) : field;
+
+            if (isNode(fieldNode)) {
+                var stackContainer = instance.getFieldStackErrorContainer(fieldNode);
+
+                stackContainer.remove();
+
+                instance.resetFieldCss(fieldNode);
+            }
         },
 
         /**
@@ -964,13 +974,14 @@ var FormValidator = A.Component.create({
          * @param {Node|String} field
          */
         validateField: function(field) {
-            var instance = this,
-                fieldNode = instance.getField(field);
+            var instance = this;
 
-            if (fieldNode) {
+            instance.resetField(field);
+
+            var fieldNode = isString(field) ? instance.getField(field) : field;
+
+            if (isNode(fieldNode)) {
                 var validatable = instance.validatable(fieldNode);
-
-                instance.resetField(fieldNode);
 
                 if (validatable) {
                     instance.fire('validateField', {
