@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-2043](https://issues.liferay.com/browse/AUI-2043) Make required rule the default error message when showAllMessages is false.
 * [AUI-2027](https://issues.liferay.com/browse/AUI-2027) Allow requiring custom validation without field values
 * [AUI-2040](https://issues.liferay.com/browse/AUI-2040) Change validation for file input on change event
 
