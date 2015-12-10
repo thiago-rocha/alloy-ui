@@ -4,6 +4,10 @@
 
 ## @VERSION@
 
+* [AUI-2043](https://issues.liferay.com/browse/AUI-2043) Make required rule the default error message when showAllMessages is false.
+
+## [3.0.3](https://github.com/liferay/alloy-ui/releases/tag/3.0.3)
+
 * [AUI-2049](https://issues.liferay.com/browse/AUI-2049) Remove custom and requireValidation validator properties
 
 ## [3.0.2](https://github.com/liferay/alloy-ui/releases/tag/3.0.2)
