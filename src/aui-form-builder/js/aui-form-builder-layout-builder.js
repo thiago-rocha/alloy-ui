@@ -16,9 +16,7 @@ var CSS_CHOOSE_COL_MOVE = A.getClassName('form', 'builder', 'choose', 'col', 'mo
     CSS_LAYOUT_BUILDER_MOVE_CANCEL = A.getClassName('layout', 'builder', 'move', 'cancel'),
     CSS_MOVE_COL_TARGET = A.getClassName('layout', 'builder', 'move', 'col', 'target'),
     CSS_MOVE_TARGET = A.getClassName('layout', 'builder', 'move', 'target'),
-    CSS_REMOVE_ROW_MODAL = A.getClassName('form', 'builder', 'remove', 'row', 'modal'),
-
-    CSS_ROW_CONTAINER_BORDER = A.getClassName('layout', 'row', 'container', 'border');
+    CSS_REMOVE_ROW_MODAL = A.getClassName('form', 'builder', 'remove', 'row', 'modal');
 
 /**
  * `A.FormBuilder` extension, which handles the `A.LayoutBuilder` inside it.
