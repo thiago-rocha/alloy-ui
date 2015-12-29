@@ -32,7 +32,8 @@ A.LayoutBuilderResizeCol.prototype = {
     TPL_RESIZE_COL_DRAGGABLE: '<div class="' + CSS_RESIZE_COL_DRAGGABLE + '">' +
         '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' +
         '<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '" tabindex="8">' +
-        '<span class="glyphicon glyphicon-resize-horizontal"></span></div></div>',
+        '<span class="glyphicon glyphicon-chevron-left"></span>' +
+        '<span class="glyphicon glyphicon-chevron-right"></span></div></div>',
 
     /**
      * Keeps a reference for dragNode for keyboard purposes only.
