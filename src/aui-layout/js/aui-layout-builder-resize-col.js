@@ -32,7 +32,8 @@ A.LayoutBuilderResizeCol.prototype = {
     TPL_RESIZE_COL_DRAGGABLE: '<div class="' + CSS_RESIZE_COL_DRAGGABLE + '">' +
         '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' +
         '<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '" tabindex="8">' +
-        '<span class="glyphicon glyphicon-resize-horizontal"></span></div></div>',
+        '<span class="glyphicon glyphicon-chevron-left"></span>' +
+        '<span class="glyphicon glyphicon-chevron-right"></span></div></div>',
 
     /**
      * Keeps a reference for dragNode for keyboard purposes only.
@@ -104,7 +105,7 @@ A.LayoutBuilderResizeCol.prototype = {
                 this.get('layout').normalizeColsHeight(new A.NodeList(row));
             }
 
-            this._hideBreakpoints(row);
+            // this._hideBreakpoints(row);
         }
 
         this._syncDragHandles();
@@ -389,6 +390,10 @@ A.LayoutBuilderResizeCol.prototype = {
         dropNodes.each(function(dropNode) {
             dropNode.setStyle('display', 'none');
         });
+
+        this.fire('hideBreakpoints', {
+            row: rowNode
+        });
     },
 
     /**
@@ -563,6 +568,10 @@ A.LayoutBuilderResizeCol.prototype = {
             if (instance._canDrop(dragNode, dropNode.getData('layout-position'))) {
                 dropNode.setStyle('display', 'block');
             }
+        });
+
+        this.fire('showBreakpoints', {
+            row: row
         });
     },
 

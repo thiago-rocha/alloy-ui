@@ -26,10 +26,24 @@
 
 .layout-builder-resize-col-draggable-handle {
     cursor: col-resize;
-    font-size: 18px;
+    font-size: 9px;
     margin-top: -9px;
+    margin-left: -4px;
     position: absolute;
     top: 50%;
+    background: #cde9fb;
+    border-radius: 100%;
+    padding: 8px 5px;
+    width: 28px;
+    height: 28px;
+    font-weight: 100;
+    z-index: 2;
+    color: #73bdf3;
+}
+
+.layout-builder-resize-col-draggable-handle span {
+    display: inline-block;
+    float: left;
 }
 
 .layout-builder-resize-col-dragging .layout-builder-resize-col-breakpoint {
@@ -46,7 +60,7 @@
 }
 
 .layout-builder-resize-col-breakpoint-line {
-    border: 1px dashed #bbb;
+    border-right: 1px dashed #bbb;
     height: 100%;
 }
 

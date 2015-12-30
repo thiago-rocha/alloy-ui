@@ -44,6 +44,9 @@ A.FormBuilderLayoutBuilder.prototype = {
             render: this._afterLayoutBuilderRender,
             'layout-row:colsChange': this._afterLayoutBuilderColsChange
         });
+
+        this.get('boundingBox').delegate('mouseenter', this._onMouseEnter, '.row', this);
+        this.get('boundingBox').delegate('mouseleave', this._onMouseLeave, '.row', this);
     },
 
     /**
@@ -96,6 +99,27 @@ A.FormBuilderLayoutBuilder.prototype = {
     },
 
     /**
+     * 
+     *
+     * @method _addSeparator
+     * @params {EventFacade} event
+     * @protected
+     */
+    _addSeparator: function(rowNode) {
+        var cols = rowNode.getData('layout-row').get('cols'),
+            colBreakpoints = rowNode.all('.layout-builder-resize-col-breakpoint'),
+            rowContainer = rowNode.ancestor('.layout-row-container-row'),
+            total = 0;
+
+        rowContainer.addClass('layout-row-vertical-border');
+
+        for (var i = 0; i < (cols.length - 1); i++) {
+            total += cols[i].get('size');
+            colBreakpoints.item(total).setStyle('display', 'initial');
+        }
+    },
+
+    /**
      * Executed after the `layout:rowsChange` is fired.
      *
      * @method _afterLayoutBuilderColsChange
@@ -136,10 +160,40 @@ A.FormBuilderLayoutBuilder.prototype = {
             originalChooseColMoveTargetFn));
 
         this._eventHandles.push(
-            this._fieldToolbar.on('onToolbarFieldMouseEnter', A.bind(this._onFormBuilderToolbarFieldMouseEnter, this))
+            this._fieldToolbar.on('onToolbarFieldMouseEnter', A.bind(this._onFormBuilderToolbarFieldMouseEnter, this)),
+            this._layoutBuilder.after('showBreakpoints', this._afterShowBreakpoints)
+            // this._layoutBuilder.after('hideBreakpoints', this._afterHideBreakpoints)
         );
 
         this._removeLayoutCutColButtons();
+    },
+
+    /**
+     * Fired after the `hideBreakpoints` event.
+     *
+     * @method _afterHideBreakpoints
+     * @protected
+     */
+    _afterHideBreakpoints: function(event) {
+        var cols = event.row.getData('layout-row').get('cols');
+
+        for (var i = 0; i < cols.length; i++) {
+            cols[i].get('node').addClass('layout-row-vertical-border');
+        }
+    },
+
+    /**
+     * Fired after the `showBreakpoints` event.
+     *
+     * @method _afterShowBreakpoints
+     * @protected
+     */
+    _afterShowBreakpoints: function(event) {
+        var cols = event.row.getData('layout-row').get('cols');
+
+        for (var i = 0; i < cols.length; i++) {
+            cols[i].get('node').removeClass('layout-row-vertical-border');
+        }
     },
 
     /**
@@ -417,6 +471,46 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _onFormBuilderToolbarFieldMouseEnter: function(event) {
         this._toggleMoveColItem(event.colNode);
+    },
+
+    /**
+     * 
+     *
+     * @method _onMouseEnter
+     * @params {EventFacade} event
+     * @protected
+     */
+    _onMouseEnter: function(event) {
+        this._addSeparator(event.currentTarget);
+    },
+
+    /**
+     * 
+     *
+     * @method _onMouseLeave
+     * @params {EventFacade} event
+     * @protected
+     */
+    _onMouseLeave: function(event) {
+        this._removeSeparator(event.currentTarget);
+    },
+
+    /**
+     * 
+     *
+     * @method _removeSeparator
+     * @params {EventFacade} event
+     * @protected
+     */
+    _removeSeparator: function(rowNode) {
+        var colBreakpoints = rowNode.all('.layout-builder-resize-col-breakpoint'),
+            rowContainer = rowNode.ancestor('.layout-row-container-row');
+
+        rowContainer.removeClass('layout-row-vertical-border');
+
+        colBreakpoints.each(function(colBreakpoint) {
+            colBreakpoint.setStyle('display', 'none');
+        });
     },
 
     /**
