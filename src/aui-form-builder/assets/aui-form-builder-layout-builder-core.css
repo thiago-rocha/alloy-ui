@@ -1,5 +1,6 @@
 .form-builder-content .layout-builder-layout-container {
     margin-bottom: 3px;
+    background-color: white;
 }
 
 .form-builder-field-move-button {
@@ -57,5 +58,40 @@
 }
 
 .layout-row-container-row {
+    border-width: 1px;
+    border-color: transparent;
+    border-style: dashed none;
     position: relative;
 }
+
+.layout-row-container-row:hover {
+    border-color: #bbb;
+}
+
+/*
+.layout-row-horizontal-border {
+    background-image: linear-gradient(to right, #D0C8C8 33%, rgba(255, 255, 255, 0) 0%);
+    background-size: 7px 3px;
+    background-position: 50% 100%;
+    background-repeat: repeat-x;
+    padding-bottom: 1px;
+}
+
+.layout-row-vertical-border {
+    border: 1px dashed #bbb;
+    height: 100%;
+
+    background-image: linear-gradient(#ccc 33%, rgba(255,255,255,0) 0%);
+    background-position: right;
+    background-size: 2px 7px;
+    background-repeat: repeat-y;
+    height: 527px;
+}*/
+
+/*.layout-builder-resize-col-breakpoint-line {
+    background-image: linear-gradient(#ccc 33%, rgba(255,255,255,0) 0%);
+    background-position: right;
+    background-size: 2px 7px;
+    background-repeat: repeat-y;
+    height: 527px;
+}*/
