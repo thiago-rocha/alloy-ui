@@ -46,7 +46,7 @@
 }
 
 .layout-builder-resize-col-breakpoint-line {
-    border: 1px dashed #bbb;
+    border-right: 1px dashed #bbb;
     height: 100%;
 }
 

@@ -44,6 +44,9 @@ A.FormBuilderLayoutBuilder.prototype = {
             render: this._afterLayoutBuilderRender,
             'layout-row:colsChange': this._afterLayoutBuilderColsChange
         });
+
+        this.get('boundingBox').delegate('mouseenter', this._onMouseEnter, '.row', this);
+        this.get('boundingBox').delegate('mouseleave', this._onMouseLeave, '.row', this);
     },
 
     /**
@@ -96,6 +99,27 @@ A.FormBuilderLayoutBuilder.prototype = {
     },
 
     /**
+     * 
+     *
+     * @method _addSeparator
+     * @params {EventFacade} event
+     * @protected
+     */
+    _addSeparator: function(rowNode) {
+        var cols = rowNode.getData('layout-row').get('cols'),
+            colBreakpoints = rowNode.all('.layout-builder-resize-col-breakpoint'),
+            rowContainer = rowNode.ancestor('.layout-row-container-row'),
+            total = 0;
+
+        rowContainer.addClass('layout-row-vertical-border');
+
+        for (var i = 0; i < (cols.length - 1); i++) {
+            total += cols[i].get('size');
+            colBreakpoints.item(total).setStyle('display', 'initial');
+        }
+    },
+
+    /**
      * Executed after the `layout:rowsChange` is fired.
      *
      * @method _afterLayoutBuilderColsChange
@@ -136,10 +160,52 @@ A.FormBuilderLayoutBuilder.prototype = {
             originalChooseColMoveTargetFn));
 
         this._eventHandles.push(
-            this._fieldToolbar.on('onToolbarFieldMouseEnter', A.bind(this._onFormBuilderToolbarFieldMouseEnter, this))
+            this._fieldToolbar.on('onToolbarFieldMouseEnter', A.bind(this._onFormBuilderToolbarFieldMouseEnter, this)),
+            this._layoutBuilder.after('showBreakpoints', A.bind(this._afterShowBreakpoints, this)),
+            this._layoutBuilder.after('hideBreakpoints', A.bind(this._afterHideBreakpoints, this)),
+            this._layoutBuilder.on('layoutDragEnd', A.bind(this._afterLayoutDragEnd, this)),
+            this._layoutBuilder.on('layoutDragStart', A.bind(this._afterLayoutDragStar, this))
         );
 
         this._removeLayoutCutColButtons();
+    },
+
+    _afterLayoutDragEnd: function() {
+        this._layoutDragging = false;
+console.log('_afterLayoutDragEnd', this);
+    },
+
+    _afterLayoutDragStar: function() {
+        this._layoutDragging = true;
+console.log('_afterLayoutDragStar', this._layoutDragging);
+    },
+
+    /**
+     * Fired after the `hideBreakpoints` event.
+     *
+     * @method _afterHideBreakpoints
+     * @protected
+     */
+    _afterHideBreakpoints: function(event) {
+        var cols = event.row.getData('layout-row').get('cols');
+
+        for (var i = 0; i < cols.length; i++) {
+            cols[i].get('node').addClass('layout-row-vertical-border');
+        }
+    },
+
+    /**
+     * Fired after the `showBreakpoints` event.
+     *
+     * @method _afterShowBreakpoints
+     * @protected
+     */
+    _afterShowBreakpoints: function(event) {
+        var cols = event.row.getData('layout-row').get('cols');
+
+        for (var i = 0; i < cols.length; i++) {
+            cols[i].get('node').removeClass('layout-row-vertical-border');
+        }
     },
 
     /**
@@ -417,6 +483,49 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _onFormBuilderToolbarFieldMouseEnter: function(event) {
         this._toggleMoveColItem(event.colNode);
+    },
+
+    /**
+     * 
+     *
+     * @method _onMouseEnter
+     * @params {EventFacade} event
+     * @protected
+     */
+    _onMouseEnter: function(event) {
+        this._addSeparator(event.currentTarget);
+    },
+
+    /**
+     * 
+     *
+     * @method _onMouseLeave
+     * @params {EventFacade} event
+     * @protected
+     */
+    _onMouseLeave: function(event) {
+console.log('-_onMouseLeave', this);
+        if (!this._layoutDragging) {
+            this._removeSeparator(event.currentTarget);
+        }
+    },
+
+    /**
+     * 
+     *
+     * @method _removeSeparator
+     * @params {EventFacade} event
+     * @protected
+     */
+    _removeSeparator: function(rowNode) {
+        var colBreakpoints = rowNode.all('.layout-builder-resize-col-breakpoint'),
+            rowContainer = rowNode.ancestor('.layout-row-container-row');
+
+        rowContainer.removeClass('layout-row-vertical-border');
+
+        colBreakpoints.each(function(colBreakpoint) {
+            colBreakpoint.setStyle('display', 'none');
+        });
     },
 
     /**

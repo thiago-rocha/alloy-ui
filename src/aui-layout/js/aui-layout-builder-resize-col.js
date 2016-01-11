@@ -104,12 +104,14 @@ A.LayoutBuilderResizeCol.prototype = {
                 this.get('layout').normalizeColsHeight(new A.NodeList(row));
             }
 
-            this._hideBreakpoints(row);
+            // this._hideBreakpoints(row);
         }
 
         this._syncDragHandles();
 
         dragNode.show();
+
+        this.fire('layoutDragEnd');
     },
 
     /**
@@ -175,6 +177,8 @@ A.LayoutBuilderResizeCol.prototype = {
      */
     _afterDragStart: function(event) {
         event.target.get('node').hide();
+
+        this.fire('layoutDragStart');
     },
 
     /**
