@@ -15,7 +15,9 @@ YUI.add('aui-modal-tests', function(Y) {
         ERROR_PLUGIN_OVERRIDEN = '{0} attribute should not be overriden',
         ERROR_PLUGIN_PLUGGED = '{0} plugin should not be already plugged',
 
-        TOUCH_ENABLED = Y.UA.touchEnabled;
+        TOUCH_ENABLED = Y.UA.touchEnabled,
+
+        win = Y.one(Y.config.win);
 
     //--------------------------------------------------------------------------
     // Test Case for Plug/Unplug
@@ -156,6 +158,14 @@ YUI.add('aui-modal-tests', function(Y) {
             boundingBox = null;
         },
 
+        _mockWindowInnerHeight: function(size) {
+            Y.Mock.expect(Y.DOM, {
+                args: [Y.Mock.Value.Object],
+                method: 'winHeight',
+                returns: size
+            });
+        },
+
         //----------------------------------------------------------------------
         // Tests
         //----------------------------------------------------------------------
@@ -176,6 +186,71 @@ YUI.add('aui-modal-tests', function(Y) {
 
             Y.Assert.isFalse(modalOpen[0]);
             Y.Assert.isFalse(modalOpen[1]);
+        },
+
+        'check if the modal is top fixed': function() {
+            modal.set('headerContent', '<h4 class="modal-title">Modal header</h4>');
+            modal.set('centered', true);
+            modal.set('topFixed', true);
+
+            modal.show();
+
+            Y.Assert.areEqual(modal.get('boundingBox').getStyle('top'), '0px');
+        },
+
+        'check if the modal is dynamic content height configured': function() {
+            if (modal) {
+                modal.destroy();
+            }
+
+            modal = new Y.Modal({ dynamicContentHeight: true }).render('#modal');
+
+            modal.show();
+
+            Y.Assert.isTrue(modal.get('boundingBox').hasClass('dynamic-content-height'));
+        },
+
+        'check if the modal realigns on topFixed toggle': function() {
+            var firstTopInfo;
+
+            modal.set('centered', true);
+            modal.set('topFixed', false);
+
+            firstTopInfo = modal.get('boundingBox').get('region').top;
+
+            modal.set('topFixed', true);
+
+            Y.Assert.isTrue(firstTopInfo > modal.get('boundingBox').get('region').top);
+        },
+
+        'check if the modal is totally visible after resize': function() {
+            var modalOuterHeight,
+                content = '';
+
+            for (var i = 60; i--; ) {
+                content += 'Body content... ';
+            }
+
+            modal.set('headerContent', '<h4 class="modal-title">Modal header</h4>');
+            modal.set('centered', true);
+            modal.set('topFixed', true);
+            modal.set('dynamicContentHeight', true);
+            modal.set('bodyContent', content);
+
+            modal.render();
+            modal.show();
+
+            this._mockWindowInnerHeight(200);
+
+            win.simulate('resize');
+
+            this.wait(function() {
+                modalOuterHeight = modal.get('boundingBox').get('offsetHeight') +
+                    parseInt(modal.get('boundingBox').getComputedStyle('marginTop')) +
+                    parseInt(modal.get('boundingBox').getComputedStyle('marginBottom'));
+
+                Y.Assert.areEqual(200, modalOuterHeight);
+            }, Y.config.windowResizeDelay || 100);
         }
     }));
 

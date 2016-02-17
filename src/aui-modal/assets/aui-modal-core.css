@@ -1,3 +1,7 @@
+.dynamic-content-height .modal-body {
+    overflow: auto;
+}
+
 .modal-content {
     overflow: hidden;
 }
