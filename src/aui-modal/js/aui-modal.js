@@ -65,7 +65,10 @@ A.Modal = A.Base.create('modal', A.Widget, [
             A.after('windowresize', A.bind('_afterWindowResize', instance)),
             instance.after('render', instance._afterRender),
             instance.after('draggableChange', instance._afterDraggableChange),
-            instance.after('visibleChange', instance._afterVisibleChange)
+            instance.after('visibleChange', instance._afterVisibleChange),
+            instance.after('topFixedChange', instance._afterTopFixedChange),
+            instance.after(instance._afterUiSetStdMod, instance, '_uiSetStdMod'),
+            instance.on('xyChange', instance._onModalXYChange)
         ];
 
         instance._applyPlugin(instance._plugDrag);
@@ -110,19 +113,6 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
-     * Fire after `maxHeight` CSS property changes.
-     *
-     * @method _afterFillHeight
-     * @param event
-     * @protected
-     */
-    _afterFillHeight: function() {
-        var instance = this;
-
-        instance._fillMaxHeight(instance.get('height'));
-    },
-
-    /**
      * Fire after drag changes.
      *
      * @method _afterDraggableChange
@@ -140,7 +130,31 @@ A.Modal = A.Base.create('modal', A.Widget, [
         }
     },
 
+    /**
+     * Fire after `maxHeight` CSS property changes.
+     *
+     * @method _afterFillHeight
+     * @param event
+     * @protected
+     */
+    _afterFillHeight: function() {
+        var instance = this;
+
+        instance._fillMaxHeight(instance.get('height'));
+    },
+
+    /**
+     * Fire after modal is rendered.
+     *
+     * @method _afterRender
+     * @protected
+     */
     _afterRender: function() {
+        if (this.get('dynamicContentHeight')) {
+            this._configModalDynamicHeight();
+            this.syncHeight();
+        }
+
         if (this.get('visible')) {
             A.all('body,html').addClass(CSS_MODAL_OPEN);
         }
@@ -164,6 +178,16 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
+     * Fire after topFixed changes.
+     *
+     * @method _afterTopFixedChange
+     * @protected
+     */
+    _afterTopFixedChange: function() {
+        this.align();
+    },
+
+    /**
      * Fires after the 'windowresize' event.
      *
      * @method _afterWindowResize
@@ -171,6 +195,10 @@ A.Modal = A.Base.create('modal', A.Widget, [
      */
     _afterWindowResize: function() {
         var instance = this;
+
+        if (this.get('dynamicContentHeight')) {
+            instance.syncHeight();
+        }
 
         if (instance.get('centered')) {
             instance.align();
@@ -197,6 +225,16 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
+     * Settup Modal Dynamic Content.
+     *
+     * @method _configModalDynamicHeight
+     * @protected
+     */
+    _configModalDynamicHeight: function() {
+        this.get('boundingBox').addClass('dynamic-content-height');
+    },
+
+    /**
      * Set `maxHeight` CSS property.
      *
      * @method _fillMaxHeight
@@ -214,6 +252,37 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
+     * Assign the Y coordinate of modal as 0.
+     *
+     * @method _fixAtTheTop
+     * @param xy
+     * @protected
+     */
+    _fixAtTheTop: function(xy) {
+        xy[1] = A.config.win.scrollY + parseInt(this.get('boundingBox').getComputedStyle('margin-top'));
+
+        return xy;
+    },
+
+    /**
+     * Get the difference between Modal Body Height and Modal Bounding Box Height
+     *
+     * @method _getModalOffset
+     * @protected
+     */
+    _getModalOffset: function() {
+        var boundingBox = this.get('boundingBox'),
+            boundingOuterHeight,
+            modalBodyHeight = A.one('.' + CSS_MODAL_BD).get('offsetHeight');
+
+            boundingOuterHeight = boundingBox.get('offsetHeight') + 
+                parseInt(boundingBox.getComputedStyle('marginTop')) + 
+                parseInt(boundingBox.getComputedStyle('marginBottom'));
+
+        return Math.max(modalBodyHeight, boundingOuterHeight) - Math.min(modalBodyHeight, boundingOuterHeight);
+    },
+
+    /**
      * Create node using predefined templates.
      *
      * @method _getStdModTemplate
@@ -222,6 +291,19 @@ A.Modal = A.Base.create('modal', A.Widget, [
      */
     _getStdModTemplate: function(section) {
         return A.Node.create(A.Modal.TEMPLATES[section], this._stdModNode.get('ownerDocument'));
+    },
+
+    /**
+     * Fired after the `xy` coordinates of modal is changed.
+     *
+     * @method _getStdModTemplate
+     * @param event
+     * @protected
+     */
+    _onModalXYChange: function(event) {
+        if (this.get('topFixed') && this.get('centered')) {
+            event.newVal = this._fixAtTheTop(event.newVal);
+        }
     },
 
     /**
@@ -252,7 +334,21 @@ A.Modal = A.Base.create('modal', A.Widget, [
         if (draggable) {
             instance.plug(A.Plugin.Drag, instance._addBubbleTargets(draggable));
         }
-    }
+    },
+
+    /**
+     * Syncronize Modal Body according to its content.
+     *
+     * @method syncHeight
+     * @protected
+     */
+    syncHeight: function() {
+        var modalBody = A.one('.' + CSS_MODAL_BD);
+
+        modalBody.setStyle('max-height', '100%');
+
+        modalBody.setStyle('max-height', A.DOM.winHeight(document) - this._getModalOffset());
+    },
 }, {
 
     /**
@@ -320,6 +416,18 @@ A.Modal = A.Base.create('modal', A.Widget, [
         },
 
         /**
+         * Determine if Modal will have its content height dynamically updated.
+         *
+         * @attribute dynamicContentHeight
+         * @default false
+         * @type Boolean
+         */
+        dynamicContentHeight: {
+            value: false,
+            writeOnce: true
+        },
+
+        /**
          * Determine the content of Modal's header section.
          *
          * @attribute toolbars
@@ -359,7 +467,22 @@ A.Modal = A.Base.create('modal', A.Widget, [
             value: {
                 header: 'pull-right'
             }
-        }
+        },
+
+        /**
+         * Works with centered attribute. Keeps the modal fixed at the top of the
+         * window taking into consideration his margin top.
+         *
+         * @attribute topFixed
+         * @default false
+         * @type Boolean
+         */
+        topFixed: {
+            value: false,
+            validator: function() {
+                return (this.get('centered'));
+            }
+        },
     },
 
     /**
