@@ -18,7 +18,7 @@ var CSS_MOVE_CANCEL = A.getClassName('layout', 'builder', 'move', 'cancel'),
     SELECTOR_ROW = '.layout-row',
 
     TPL_MOVE_CUT = '<div class="' + CSS_MOVE_CUT_BUTTON + '" tabindex="0"></div>',
-    TPL_MOVE_TARGET = '<div class="' + CSS_MOVE_TARGET + '"><span class="' + CSS_MOVE_TARGET_LABEL + '">Past Here<span></div>';
+    TPL_MOVE_TARGET = '<div class="' + CSS_MOVE_TARGET + '"><span class="' + CSS_MOVE_TARGET_LABEL + '">Paste Here<span></div>';
 
 /**
  * A base class for Layout Move.
