@@ -172,26 +172,30 @@ YUI.add('aui-form-builder-settings-modal-tests', function(Y) {
             Y.Assert.areNotEqual('none', node.getStyle('display'));
         },
 
-        'should align vertically the modal after height of the advanced settings panel change': function() {
+        'should expand vertically the modal after height of the advanced settings panel change': function() {
             var node,
-                initialYPosition;
+                initialHeight;
 
             this._modal.show(new Y.FormBuilderFieldText(), 'Text');
 
             node = Y.one('.form-builder-field-settings');
-            initialYPosition = node.getY();
+            initialHeight = node.get('offsetHeight');
+
+            //remove the modal margin to fit PhantonJS height.
+            node.setStyle('margin', 0);
+            this._modal._modal.syncHeight();
 
             node.one('.form-builder-field-settings-panel-toggler-advanced').simulate('click');
 
             this.wait(function(){
-                var newVertialPosition = initialYPosition - node.one('.toggler-content-wrapper').get('region').height / 2;
+                var newHeight = initialHeight + node.one('.toggler-content-wrapper').get('offsetHeight');
 
-                Y.Assert.areEqual(node.getY(), newVertialPosition);
+                Y.Assert.areEqual(node.get('offsetHeight'), newHeight, Y.config.win.innerHeight.toString());
 
                 node.one('.form-builder-field-settings-panel-toggler-advanced').simulate('click');
 
                 this.wait(function(){
-                    Y.Assert.areEqual(initialYPosition, node.getY());
+                    Y.Assert.areEqual(initialHeight, node.get('offsetHeight'), 'initial height');
                 }, 500);
             }, 500);
         }
