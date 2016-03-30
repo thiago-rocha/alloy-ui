@@ -4,7 +4,7 @@
 
 ## @VERSION@
 
-No registries yet.
+* [AUI-2103](https://issues.liferay.com/browse/AUI-2103) Date Picker fire a selectedDateChange event when the date value changes and Time picker fires selectedTimeChange when the time value changes
 
 ## [3.0.3](https://github.com/liferay/alloy-ui/releases/tag/3.0.3)
 

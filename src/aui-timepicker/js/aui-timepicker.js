@@ -347,6 +347,26 @@ A.mix(TimePickerBase.prototype, {
     },
 
     /**
+     * Handles selectedTimeChange event.
+     *
+     * @method _handleSelectedChangeEvent
+     * @param event
+     * @protected
+     */
+    _handleSelectedChangeEvent: function() {
+        var instance = this;
+
+        if (instance._currentDate !== undefined && instance._newDate !== instance._currentDate) {
+            instance.fire('selectedTimeChange', {
+                newDate: instance._newDate,
+                prevDate: instance._currentDate
+            });
+
+            instance._currentDate = instance._newDate;
+        }
+    },
+
+    /**
      * Sets new selection.
      *
      * @method _handleSelection

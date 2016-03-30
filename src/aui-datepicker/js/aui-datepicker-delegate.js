@@ -85,7 +85,6 @@ DatePickerDelegate.prototype = {
 
             container.delegate(
                 'key', A.bind('_handleTabKeyEvent', instance), 'tab', trigger)
-
         ];
 
         instance.after(
@@ -203,6 +202,10 @@ DatePickerDelegate.prototype = {
         valueFormatter.call(instance, selection);
 
         activeInput.setData('datepickerSelection', selection);
+
+        instance._newDate = activeInput.val();
+
+        instance._handleSelectedChangeEvent();
     },
 
     /**
@@ -223,7 +226,7 @@ DatePickerDelegate.prototype = {
     },
 
     /**
-    * Handles keydown events
+    * Handles keydown events.
     *
     * @method _handleKeydownEvent
     * @param event
@@ -255,9 +258,14 @@ DatePickerDelegate.prototype = {
      * @protected
      */
     _onceUserInteraction: function(event) {
-        var instance = this;
+        var instance = this,
+            activeInput;
 
         instance.useInputNodeOnce(event.currentTarget);
+
+        activeInput = instance.get('activeInput');
+
+        instance._currentDate = activeInput.val();
 
         instance._userInteractionInProgress = true;
     },

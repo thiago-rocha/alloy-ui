@@ -289,6 +289,26 @@ A.mix(DatePickerBase.prototype, {
     },
 
     /**
+     * Handles selectedDateChange event.
+     *
+     * @method _handleSelectedChangeEvent
+     * @param event
+     * @protected
+     */
+    _handleSelectedChangeEvent: function() {
+        var instance = this;
+
+        if (instance._currentDate !== undefined && instance._newDate !== instance._currentDate) {
+            instance.fire('selectedDateChange', {
+                newDate: instance._newDate,
+                prevDate: instance._currentDate
+            });
+
+            instance._currentDate = instance._newDate;
+        }
+    },
+
+    /**
      * Fires when the user's first interaction happens.
      *
      * @method _onceUserInteractionRelease
