@@ -109,6 +109,16 @@ A.FormBuilderLayoutBuilder.prototype = {
     },
 
     /**
+     * Executed after the `layout-builder:moveEnd` is fired.
+     *
+     * @method _afterLayoutBuilderMoveEnd
+     * @protected
+     */
+    _afterLayoutBuilderMoveEnd: function() {
+        this._enableAddFields();
+    },
+
+    /**
      * Executed after the `layout-builder:moveStart` is fired.
      *
      * @method _afterLayoutBuilderMoveStart
@@ -119,6 +129,8 @@ A.FormBuilderLayoutBuilder.prototype = {
         if (event.moveElement instanceof A.LayoutRow) {
             this._bindMoveRowEvents();
         }
+
+        this._disableAddFields();
     },
 
     /**
@@ -143,6 +155,7 @@ A.FormBuilderLayoutBuilder.prototype = {
         });
 
         this._layoutBuilder.after('layout-builder:moveStart', A.bind(this._afterLayoutBuilderMoveStart, this));
+        this._layoutBuilder.after('layout-builder:moveEnd', A.bind(this._afterLayoutBuilderMoveEnd, this));
         
         originalChooseColMoveTargetFn = this._layoutBuilder.get('chooseColMoveTarget');
         this._layoutBuilder.set('chooseColMoveTarget', A.bind(this._chooseColMoveTarget, this,
@@ -340,7 +353,7 @@ A.FormBuilderLayoutBuilder.prototype = {
     /**
      * Detaches events related to the cancel move row funcionality.
      *
-     * @method _detachCancelMoveFieldEvents
+     * @method _detachCancelMoveRowEvents
      * @protected
      */
     _detachCancelMoveRowEvents: function() {
@@ -355,6 +368,34 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _detachCancelMoveFieldEvents: function() {
         new A.EventHandle(this._cancelMoveFieldHandles).detach();
+    },
+
+    /**
+     * Disable add fields functionality.
+     *
+     * @method _disableAddFields
+     * @protected
+     */
+    _disableAddFields: function() {
+        this.getActiveLayout().get('rows').forEach(function(row) {
+            row.get('cols').forEach(function(col) {
+                col.get('value').set('enableAddFields', false);
+            });
+        });
+    },
+
+    /**
+     * Enable add fields functionality.
+     *
+     * @method _enableAddFields
+     * @protected
+     */
+    _enableAddFields: function() {
+        this.getActiveLayout().get('rows').forEach(function(row) {
+            row.get('cols').forEach(function(col) {
+                col.get('value').set('enableAddFields', true);
+            });
+        });
     },
 
     /**
@@ -455,6 +496,7 @@ A.FormBuilderLayoutBuilder.prototype = {
         if (!(targetNode.hasClass(CSS_MOVE_TARGET) && targetNode.hasClass(CSS_MOVE_COL_TARGET))) {
             this._layoutBuilder.cancelMove();
             this._detachCancelMoveFieldEvents();
+            this._enableAddFields();
         }
     },
 
@@ -471,6 +513,7 @@ A.FormBuilderLayoutBuilder.prototype = {
         if (!(targetNode.hasClass(CSS_MOVE_ROW_TARGET))) {
             this._layoutBuilder.cancelMove();
             this._detachCancelMoveRowEvents();
+            this._enableAddFields();
         }
     },
 
@@ -489,6 +532,7 @@ A.FormBuilderLayoutBuilder.prototype = {
 
         this._layoutBuilder.cancelMove();
         this._detachCancelMoveFieldEvents();
+        this._enableAddFields();
     },
 
     /**
