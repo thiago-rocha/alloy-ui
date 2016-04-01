@@ -116,6 +116,7 @@ A.FormBuilderLayoutBuilder.prototype = {
      */
     _afterLayoutBuilderMoveEnd: function() {
         this._enableAddFields();
+        this._fieldToolbar.set('disabled', false);
     },
 
     /**
@@ -131,6 +132,7 @@ A.FormBuilderLayoutBuilder.prototype = {
         }
 
         this._disableAddFields();
+        this._fieldToolbar.set('disabled', true);
     },
 
     /**
