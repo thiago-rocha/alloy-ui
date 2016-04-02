@@ -329,6 +329,12 @@ A.FormBuilderFieldList  = A.Base.create('form-builder-field-list', A.Base, [], {
             writeOnce: 'initOnly'
         },
 
+        /**
+         * Attribute responsible for enable or disable add fields.
+         *
+         * @attribute enableAddFields
+         * @type {Boolean}
+         */
         enableAddFields: {
             validator: A.Lang.isBoolean,
             value: true
