@@ -1,4 +1,8 @@
-.btn-hidden {
+.aui-button-hidden, .yui3-aui-button-hidden {
+    display: none;
+}
+
+.togglebtn-hidden, .yui3-togglebtn-hidden {
     display: none;
 }
 

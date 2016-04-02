@@ -46,3 +46,7 @@
     right: 2px;
     left: initial;
 }
+
+.button-switch-hidden, .yui3-button-switch-hidden {
+    display: none;
+}
