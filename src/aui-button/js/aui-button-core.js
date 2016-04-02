@@ -159,7 +159,7 @@ ButtonExt.prototype = {
 
     /**
      * Includes default button classes if necessary.
-     * Fires after `renderUI` method. 
+     * Fires after `renderUI` method.
      *
      * @method renderButtonExtUI
      * @protected
