@@ -871,7 +871,7 @@ var SchedulerBase = A.Component.create({
      * @type {Array}
      * @static
      */
-    UI_ATTRS: ['date', 'activeView'],
+    UI_ATTRS: ['date', 'activeView', 'showToolbar'],
 
     /**
      * Static property used to define the augmented classes.
@@ -1467,6 +1467,19 @@ var SchedulerBase = A.Component.create({
 
                 instance.syncEventsUI();
             }
+        },
+
+        /**
+         * Set the `showToolbar` property - i.e., defines if the scheduler
+         * header will be displayed.
+         *
+         * @method _uiSetShowToolbar
+         * @protected
+         */
+        _uiSetShowToolbar: function() {
+            var instance = this;
+
+            instance.syncStdContent();
         }
     }
 });
