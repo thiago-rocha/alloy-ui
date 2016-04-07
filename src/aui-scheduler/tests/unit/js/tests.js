@@ -961,6 +961,58 @@ YUI.add('aui-scheduler-tests', function(Y) {
                 20, Y.all('.scheduler-view-agenda-event').size(),
                 'Should show at most 20 events.'
             );
+        },
+
+        'should hide toolbar if disabled, but then display it if requested': function() {
+            this._createScheduler({
+                showToolbar: false
+            });
+
+            Y.Assert.areEqual(
+                0, Y.all('.scheduler-base-controls').size(),
+                'No controls should be visible.'
+            );
+            Y.Assert.areEqual(
+                0, Y.all('.scheduler-base-views').size(),
+                'No view buttons should be visible.'
+            );
+
+            this._scheduler.set('showToolbar', true);
+
+            Y.Assert.areEqual(
+                1, Y.all('.scheduler-base-controls').size(),
+                'Controls should be visible.'
+            );
+            Y.Assert.areEqual(
+                1, Y.all('.scheduler-base-views').size(),
+                'View buttons should be visible.'
+            );
+        },
+
+        'should display toolbar if enabled, but then hide it if requested': function() {
+            this._createScheduler({
+                showToolbar: true
+            });
+
+            Y.Assert.areEqual(
+                1, Y.all('.scheduler-base-controls').size(),
+                'Controls should be visible.'
+            );
+            Y.Assert.areEqual(
+                1, Y.all('.scheduler-base-views').size(),
+                'Ciew buttons should be visible.'
+            );
+
+            this._scheduler.set('showToolbar', false);
+
+            Y.Assert.areEqual(
+                0, Y.all('.scheduler-base-controls').size(),
+                'Controls should not be visible.'
+            );
+            Y.Assert.areEqual(
+                0, Y.all('.scheduler-base-views').size(),
+                'View buttons should not be visible.'
+            );
         }
     }));
 
