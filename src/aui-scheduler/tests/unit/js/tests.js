@@ -1013,6 +1013,25 @@ YUI.add('aui-scheduler-tests', function(Y) {
                 0, Y.all('.scheduler-base-views').size(),
                 'View buttons should not be visible.'
             );
+        },
+
+        'should not replicate view buttons': function() {
+            this._createScheduler({
+                showToolbar: true
+            });
+
+            Y.Assert.areEqual(
+                4, Y.all('button.scheduler-base-view').size(),
+                'There should be 4 view buttons.'
+            );
+
+            this._scheduler.set('showToolbar', false);
+            this._scheduler.set('showToolbar', true);
+
+            Y.Assert.areEqual(
+                4, Y.all('button.scheduler-base-view').size(),
+                'There should be 4 view buttons.'
+            );
         }
     }));
 
