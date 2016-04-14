@@ -11,6 +11,7 @@ var CSS_SCHEDULER_VIEW_ = A.getClassName('scheduler-base', 'view', ''),
     DateMath = A.DataType.DateMath,
     Lang = A.Lang,
     isArray = Lang.isArray,
+    isBoolean = Lang.isBoolean,
     isDate = Lang.isDate,
     isFunction = Lang.isFunction,
     isNumber = Lang.isNumber,
@@ -774,6 +775,18 @@ var SchedulerBase = A.Component.create({
         },
 
         /**
+         * Define whether the scheduler toolbar will be displayed.
+         *
+         * @attribute showToolbar
+         * @default true
+         * @type {Boolean}
+         */
+        showToolbar: {
+            validator: isBoolean,
+            value: true
+        },
+
+        /**
          * Contains the node for the select dropdown for `Scheduler`'s views.
          * This node is only visible on mobile.
          *
@@ -858,7 +871,7 @@ var SchedulerBase = A.Component.create({
      * @type {Array}
      * @static
      */
-    UI_ATTRS: ['date', 'activeView'],
+    UI_ATTRS: ['date', 'activeView', 'showToolbar'],
 
     /**
      * Static property used to define the augmented classes.
@@ -894,6 +907,8 @@ var SchedulerBase = A.Component.create({
             instance.viewsSelectNode = instance.get('viewsSelectNode');
             instance.todayNode = instance.get('todayNode');
             instance.viewsNode = instance.get('viewsNode');
+
+            instance._populateViewNodes();
 
             instance.after({
                 activeViewChange: instance._afterActiveViewChange,
@@ -1064,12 +1079,14 @@ var SchedulerBase = A.Component.create({
         renderButtonGroup: function() {
             var instance = this;
 
-            instance.buttonGroup = new A.ButtonGroup({
-                boundingBox: instance.viewsNode,
-                on: {
-                    selectionChange: A.bind(instance._onButtonGroupSelectionChange, instance)
-                }
-            }).render();
+            if (instance.get('showToolbar')) {
+                instance.buttonGroup = new A.ButtonGroup({
+                    boundingBox: instance.viewsNode,
+                    on: {
+                        selectionChange: A.bind(instance._onButtonGroupSelectionChange, instance)
+                    }
+                }).render();
+            }
         },
 
         /**
@@ -1090,26 +1107,25 @@ var SchedulerBase = A.Component.create({
          */
         syncStdContent: function() {
             var instance = this;
-            var views = instance.get('views');
 
-            instance.navNode.append(instance.iconPrevNode);
-            instance.navNode.append(instance.todayNode);
-            instance.navNode.append(instance.iconNextNode);
+            if (instance.get('showToolbar')) {
+                instance.navNode.append(instance.iconPrevNode);
+                instance.navNode.append(instance.todayNode);
+                instance.navNode.append(instance.iconNextNode);
 
-            instance.controlsNode.append(instance.navNode);
-            instance.controlsNode.append(instance.navDateNode);
+                instance.controlsNode.append(instance.navNode);
+                instance.controlsNode.append(instance.navDateNode);
 
-            A.Array.each(views, function(view) {
-                instance.viewsSelectNode.append(instance._createViewTriggerNode(view, TPL_SCHEDULER_VIEW_LIST));
-                instance.viewsNode.append(instance._createViewTriggerNode(view, TPL_SCHEDULER_VIEW_BUTTON));
-            });
+                instance.viewsNode.append(instance.viewsSelectNode);
 
-            instance.viewsNode.append(instance.viewsSelectNode);
+                instance.header.append(instance.controlsNode);
+                instance.header.append(instance.viewsNode);
 
-            instance.header.append(instance.controlsNode);
-            instance.header.append(instance.viewsNode);
-
-            instance.setStdModContent(WidgetStdMod.HEADER, instance.header.getDOM());
+                instance.setStdModContent(WidgetStdMod.HEADER, instance.header.getDOM());
+            }
+            else {
+                instance.header.remove();
+            }
         },
 
         /**
@@ -1318,6 +1334,32 @@ var SchedulerBase = A.Component.create({
         },
 
         /**
+         * Add the content to represent each view to the corresponding view
+         * nodes.
+         *
+         * The scheduler can display its events in many views - day view, week
+         * view etc. These views are selected through a set of buttons at the
+         * top left of the scheduler (if it is being viewed in desktop mode)
+         * or from a select (if it is being viewed from a mobile device). This
+         * method checks which views the scheduler is expected to render, and
+         * adds elements both options (i.e. adds buttons to the button group and
+         * options to the select).
+         *
+         * @method _populateViewNodes
+         * @protected
+         */
+        _populateViewNodes: function() {
+            var instance = this;
+
+            var views = instance.get('views');
+
+            A.Array.each(views, function(view) {
+                instance.viewsSelectNode.append(instance._createViewTriggerNode(view, TPL_SCHEDULER_VIEW_LIST));
+                instance.viewsNode.append(instance._createViewTriggerNode(view, TPL_SCHEDULER_VIEW_BUTTON));
+            });
+        },
+
+        /**
          * Plugs 'NodeFocusManager' into the viewsNode and navNode.
          *
          * @method _plugFocusManager
@@ -1447,6 +1489,19 @@ var SchedulerBase = A.Component.create({
 
                 instance.syncEventsUI();
             }
+        },
+
+        /**
+         * Set the `showToolbar` property - i.e., defines if the scheduler
+         * header will be displayed.
+         *
+         * @method _uiSetShowToolbar
+         * @protected
+         */
+        _uiSetShowToolbar: function() {
+            var instance = this;
+
+            instance.syncStdContent();
         }
     }
 });
