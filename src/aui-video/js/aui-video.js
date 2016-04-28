@@ -234,6 +234,24 @@ var Video = A.Component.create({
 
             instance.publish('play');
             instance.publish('pause');
+
+            instance._eventHandles = [
+                A.after(
+                    'windowresize',
+                    A.bind('afterWindowResize', instance)
+                )
+            ];
+        },
+
+        /**
+          * Destructor implementation.
+          * Lifecycle.
+          *
+          * @method destructor
+          * @protected
+          */
+        destructor: function() {
+            (new A.EventHandle(instance._eventHandles)).detach();
         },
 
         /**
@@ -293,6 +311,25 @@ var Video = A.Component.create({
         },
 
         /**
+         * Remove the defined height and width from the bounding box.
+         *
+         * @method responsiveBoundingBox
+         * @publich
+         */
+        responsiveBoundingBox: function() {
+            var instance = this;
+
+            var boundingBox = instance.get('boundingBox');
+
+            boundingBox.setStyles(
+                {
+                    height: '',
+                    width: ''
+                }
+            );
+        },
+
+        /**
          * Create `source` element
          * using passed type attribute.
          *
@@ -306,6 +343,21 @@ var Video = A.Component.create({
             sourceNode.attr('type', type);
 
             return sourceNode;
+        },
+
+        /**
+         * Fired after the `windowresize` event.
+         *
+         * @method afterWindowResize
+         * @param {EventFacade} event
+         * @public
+         */
+        afterWindowResize: function(event) {
+            var instance = this;
+
+            instance.responsiveBoundingBox();
+
+            instance._setResponsiveDimensions(event);
         },
 
         /**
@@ -432,6 +484,46 @@ var Video = A.Component.create({
             instance.get('contentBox').append(video);
 
             instance._video = video;
+        },
+
+        /**
+         * Set the dimensions of the video player based on the window size.
+         *
+         * @method _setResponsiveDimensions
+         * @param {EventFacade} event
+         * @protected
+         */
+        _setResponsiveDimensions: function(event) {
+            var instance = this;
+
+            var height = instance.get('height');
+            var width = instance.get('width');
+
+            var aspectRatio = height / width;
+
+            var updatedHeight = height;
+            var updatedWidth = width;
+
+            var currentTarget = event.currentTarget;
+
+            var currentTargetHeight = currentTarget.height();
+
+            if (currentTargetHeight < height) {
+                updatedHeight = currentTargetHeight;
+                updatedWidth = currentTargetHeight * aspectRatio;
+            }
+
+            var currentTargetWidth = currentTarget.width();
+
+            if (currentTargetWidth < width) {
+                updatedHeight = currentTargetWidth * aspectRatio;
+                updatedWidth = currentTargetWidth;
+            }
+
+            var video = instance._video;
+
+            video.width(updatedWidth);
+            video.height(updatedHeight);
         },
 
         /**
