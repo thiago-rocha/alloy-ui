@@ -9,6 +9,7 @@ var CLASS_NAMES = {
         BUTTON_DEFAULT: A.getClassName('btn', 'default'),
         BUTTON_GROUP: A.getClassName('btn', 'group'),
         DISABLED: A.getClassName('disabled'),
+        HIDDEN: A.getClassName('hidden'),
         LABEL: A.getClassName('label'),
         PRIMARY: A.getClassName('btn', 'primary'),
         SELECTED: A.getClassName('active'),
@@ -106,6 +107,16 @@ ButtonExt.ATTRS = {
     iconAlign: {
         validator: A.Lang.isString,
         value: 'left'
+    },
+
+    /**
+     * Sets visible/hidden state.
+     *
+     * @default true
+     * @type {Boolean}
+     */
+    visible: {
+        value: true
     }
 };
 
@@ -153,8 +164,10 @@ ButtonExt.prototype = {
         this.after(this.syncButtonExtUI, this, 'syncUI');
         this.after({
             iconChange: this._afterIconChange,
-            iconAlignChange: this._afterIconAlignChange
+            iconAlignChange: this._afterIconAlignChange,
         });
+
+        this.on('visibleChange', A.bind('_onVisibleChange', this));
     },
 
     /**
@@ -180,7 +193,26 @@ ButtonExt.prototype = {
      */
     syncButtonExtUI: function() {
         this._uiSetIcon(this.get('icon'));
+        this._uiSetVisibility(this.get('visible'));
         this._setButtonRole();
+    },
+
+    /**
+     * @method hide
+     * @description Sets the button's `visible` attribute to `false`
+     * @public
+     */
+    hide: function() {
+        this.set('visible', false);
+    },
+
+    /**
+     * @method show
+     * @description Sets the button's `visible` attribute to `true`
+     * @public
+    */
+    show: function() {
+        this.set('visible', true);
     },
 
     /**
@@ -214,6 +246,17 @@ ButtonExt.prototype = {
      */
     _domTypeValidator: function(type) {
         return type.toLowerCase() === 'button' || type.toLowerCase() === 'submit';
+    },
+
+    /**
+     * Fires on `visibleChange` event
+     *
+     * @method _onVisibleChange
+     * @param value {EventFacade} event
+     * @protected
+     */
+    _onVisibleChange: function(event) {
+        this._uiSetVisibility(event.newVal);
     },
 
     /**
@@ -271,6 +314,19 @@ ButtonExt.prototype = {
         }
 
         A.Button.syncIconUI(this.get('boundingBox'), iconElement, val);
+    },
+
+    /**
+     * Add hidden CSS class for button visibility.
+     *
+     * @method _uiSetVisibility
+     * @param {String} val
+     * @protected
+     */
+     _uiSetVisibility: function(val) {
+        var node = this.getNode();
+
+        node.toggleClass(CLASS_NAMES.HIDDEN, !val);
     }
 };
 
