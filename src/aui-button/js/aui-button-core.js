@@ -171,6 +171,15 @@ ButtonExt.prototype = {
     },
 
     /**
+     * @description Sets the button's `visible` attribute to `false`.
+     * 
+     * @method hide
+     */
+    hide: function() {
+        this.set('visible', false);
+    },
+
+    /**
      * Includes default button classes if necessary.
      * Fires after `renderUI` method.
      *
@@ -187,6 +196,15 @@ ButtonExt.prototype = {
     },
 
     /**
+     * @description Sets the button's `visible` attribute to `true`.
+     * 
+     * @method show
+    */
+    show: function() {
+        this.set('visible', true);
+    },
+
+    /**
      * Updates icon CSS class.
      *
      * @method syncButtonExtUI
@@ -195,24 +213,6 @@ ButtonExt.prototype = {
         this._uiSetIcon(this.get('icon'));
         this._uiSetVisibility(this.get('visible'));
         this._setButtonRole();
-    },
-
-    /**
-     * @method hide
-     * @description Sets the button's `visible` attribute to `false`
-     * @public
-     */
-    hide: function() {
-        this.set('visible', false);
-    },
-
-    /**
-     * @method show
-     * @description Sets the button's `visible` attribute to `true`
-     * @public
-    */
-    show: function() {
-        this.set('visible', true);
     },
 
     /**
@@ -249,7 +249,7 @@ ButtonExt.prototype = {
     },
 
     /**
-     * Fires on `visibleChange` event
+     * Fires on `visibleChange` event.
      *
      * @method _onVisibleChange
      * @param value {EventFacade} event
