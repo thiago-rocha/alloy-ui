@@ -549,11 +549,14 @@ var FormValidator = A.Component.create({
 				stackContainer;
 
 			fieldName = isNode(field) ? field.get('name') : field;
-			namedFieldNodes = A.all(instance.getFieldsByName(fieldName));
-			stackContainer = instance.getFieldStackErrorContainer(field);
 
 			instance.clearFieldError(fieldName);
+
+			stackContainer = instance.getFieldStackErrorContainer(field);
+
 			stackContainer.remove();
+
+			namedFieldNodes = A.all(instance.getFieldsByName(fieldName));
 
 			namedFieldNodes.each(
 				function(node, index, nodeList) {
