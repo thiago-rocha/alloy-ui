@@ -6,6 +6,11 @@ var Lang = A.Lang,
 	isDate = Lang.isDate,
 	isEmpty = AObject.isEmpty,
 	isFunction = Lang.isFunction,
+
+	isNode = function(v) {
+        return (v instanceof A.Node);
+    },
+
 	isObject = Lang.isObject,
 	isString = Lang.isString,
 	trim = Lang.trim,
@@ -353,9 +358,10 @@ var FormValidator = A.Component.create({
 		},
 
 		clearFieldError: function(field) {
-			var instance = this;
+			var instance = this,
+				fieldName = isNode(field) ? field.get(NAME) : field;
 
-			delete instance.errors[field.get(NAME)];
+			delete instance.errors[fieldName];
 		},
 
 		eachRule: function(fn) {
@@ -423,7 +429,7 @@ var FormValidator = A.Component.create({
 
 		getFieldStackErrorContainer: function(field) {
 			var instance = this,
-				name = isNode(field) ? field.get('name') : field,
+				name = isNode(field) ? field.get(NAME) : field,
 				stackContainers = instance._stackErrorContainers;
 
 			if (!stackContainers[name]) {
@@ -548,7 +554,7 @@ var FormValidator = A.Component.create({
 				namedFieldNodes,
 				stackContainer;
 
-			fieldName = isNode(field) ? field.get('name') : field;
+			fieldName = isNode(field) ? field.get(NAME) : field;
 
 			instance.clearFieldError(fieldName);
 
