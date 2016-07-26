@@ -6,6 +6,11 @@ var Lang = A.Lang,
 	isDate = Lang.isDate,
 	isEmpty = AObject.isEmpty,
 	isFunction = Lang.isFunction,
+
+	isNode = function(v) {
+        return (v instanceof A.Node);
+    },
+
 	isObject = Lang.isObject,
 	isString = Lang.isString,
 	trim = Lang.trim,
@@ -40,6 +45,7 @@ var Lang = A.Lang,
 	FIELD_CONTAINER = 'fieldContainer',
 	FIELD_STRINGS = 'fieldStrings',
 	FOCUS = 'focus',
+	LABEL_CSS_CLASS = 'labelCssClass',
 	MESSAGE = 'message',
 	MESSAGE_CONTAINER = 'messageContainer',
 	NAME = 'name',
@@ -223,6 +229,11 @@ var FormValidator = A.Component.create({
 			validator: isObject
 		},
 
+		labelCssClass: {
+			validator: isString,
+			value: 'aui-field-label'
+		},
+
 		messageContainer: {
 			getter: function(val) {
 				return A.Node.create(val).clone();
@@ -347,9 +358,10 @@ var FormValidator = A.Component.create({
 		},
 
 		clearFieldError: function(field) {
-			var instance = this;
+			var instance = this,
+				fieldName = isNode(field) ? field.get(NAME) : field;
 
-			delete instance.errors[field.get(NAME)];
+			delete instance.errors[fieldName];
 		},
 
 		eachRule: function(fn) {
@@ -394,7 +406,7 @@ var FormValidator = A.Component.create({
 			if (isString(fieldOrFieldName)) {
 				fieldOrFieldName = instance.getFieldsByName(fieldOrFieldName);
 
-				if (fieldOrFieldName.length) {
+				if (fieldOrFieldName && fieldOrFieldName.length && !fieldOrFieldName.name) {
 					fieldOrFieldName = fieldOrFieldName[0];
 				}
 			}
@@ -417,7 +429,7 @@ var FormValidator = A.Component.create({
 
 		getFieldStackErrorContainer: function(field) {
 			var instance = this,
-				name = field.get(NAME),
+				name = isNode(field) ? field.get(NAME) : field,
 				stackContainers = instance._stackErrorContainers;
 
 			if (!stackContainers[name]) {
@@ -459,21 +471,35 @@ var FormValidator = A.Component.create({
 
 		highlight: function(field, valid) {
 			var instance = this,
-				fieldContainer = instance.findFieldContainer(field);
-
-			instance._highlightHelper(
-				field,
-				instance.get(ERROR_CLASS),
-				instance.get(VALID_CLASS),
-				valid
-			);
-
-			instance._highlightHelper(
 				fieldContainer,
-				instance.get(CONTAINER_ERROR_CLASS),
-				instance.get(CONTAINER_VALID_CLASS),
-				valid
-			);
+				fieldName,
+				namedFieldNodes;
+
+			if (field) {
+				fieldContainer = instance.findFieldContainer(field),
+
+				fieldName = field.get(NAME);
+
+				namedFieldNodes = A.all(instance.getFieldsByName(fieldName));
+
+				namedFieldNodes.each(
+					function(node, index, nodeList) {
+						instance._highlightHelper(
+							node,
+							instance.get(ERROR_CLASS),
+							instance.get(VALID_CLASS),
+							valid
+						);
+					}
+				);
+
+				instance._highlightHelper(
+					fieldContainer,
+					instance.get(CONTAINER_ERROR_CLASS),
+					instance.get(CONTAINER_VALID_CLASS),
+					valid
+				)
+			}
 		},
 
 		normalizeRuleValue: function(ruleValue) {
@@ -524,11 +550,26 @@ var FormValidator = A.Component.create({
 
 		resetField: function(field) {
 			var instance = this,
-				stackContainer = instance.getFieldStackErrorContainer(field);
+				fieldName,
+				namedFieldNodes,
+				stackContainer;
+
+			fieldName = isNode(field) ? field.get(NAME) : field;
+
+			instance.clearFieldError(fieldName);
+
+			stackContainer = instance.getFieldStackErrorContainer(field);
 
 			stackContainer.remove();
-			instance.resetFieldCss(field);
-			instance.clearFieldError(field);
+
+			namedFieldNodes = A.all(instance.getFieldsByName(fieldName));
+
+			namedFieldNodes.each(
+				function(node, index, nodeList) {
+					instance.resetFieldCss(node);
+					instance.unhighlight(node);
+				}
+			);
 		},
 
 		resetFieldCss: function(field) {
@@ -547,6 +588,12 @@ var FormValidator = A.Component.create({
 
 			removeClasses(field, [VALID_CLASS, ERROR_CLASS]);
 			removeClasses(fieldContainer, [CONTAINER_VALID_CLASS, CONTAINER_ERROR_CLASS]);
+
+			if (field.get(TYPE).toLowerCase() == RADIO && fieldContainer) {
+				var radioFieldContainer = fieldContainer.ancestor('.aui-field-wrapper-content');
+
+				removeClasses(radioFieldContainer, [CONTAINER_VALID_CLASS, CONTAINER_ERROR_CLASS]);
+			}
 		},
 
 		validatable: function(field) {
@@ -613,17 +660,35 @@ var FormValidator = A.Component.create({
 		},
 
 		_defErrorFieldFn: function(event) {
-			var instance = this;
+			var instance = this,
+				ancestor,
+				field,
+				nextSibling,
+				stackContainer,
+				target,
+				validator;
 
-			var validator = event.validator;
-			var field = validator.field;
+			validator = event.validator;
+			field = validator.field;
 
 			instance.highlight(field);
 
 			if (instance.get(SHOW_MESSAGES)) {
-				var stackContainer = instance.getFieldStackErrorContainer(field);
+				target = field;
 
-				field.placeBefore(stackContainer);
+				stackContainer = instance.getFieldStackErrorContainer(field);
+
+				nextSibling = field.get('nextSibling');
+
+				if (nextSibling && nextSibling.get('nodeType') === 3) {
+					ancestor = field.ancestor();
+
+					if (ancestor && ancestor.hasClass(instance.get(LABEL_CSS_CLASS))) {
+						target = nextSibling;
+					}
+				}
+
+				target.placeAfter(stackContainer);
 
 				instance.printStackError(
 					field,
@@ -809,7 +874,6 @@ var FormValidator = A.Component.create({
 				}
 			}
 		},
-
 
 		_uiSetValidateOnBlur: function(val) {
 			var instance = this,

@@ -249,7 +249,7 @@ var AvailableField = A.Component.create({
 
 			instance.get(NODE).attr(TITLE, val);
 
-			instance.labelNode.setContent(val);
+			instance.labelNode.setContent(A.Escape.html(val));
 		}
 	}
 });
@@ -795,4 +795,4 @@ var DiagramBuilderBase = A.Component.create(
 
 A.DiagramBuilderBase = DiagramBuilderBase;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-tabs','aui-property-list','collection','dd']});
+}, '@VERSION@' ,{requires:['aui-tabs','aui-property-list','collection','dd'], skinnable:true});

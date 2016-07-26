@@ -1,6 +1,7 @@
 AUI.add('aui-datatable-edit', function(A) {
 var Lang = A.Lang,
 	AArray = A.Array,
+    AEscape = A.Escape,
 	isArray = Lang.isArray,
 	isBoolean = Lang.isBoolean,
 	isFunction = Lang.isFunction,
@@ -287,10 +288,12 @@ A.mix(CellEditorSupport.prototype, {
 		var selection = instance.selection;
 
 		if (selection) {
+			var newVal = A.Escape.html(event.newVal);
+
 			recordset.updateRecordDataByKey(
 				selection.getActiveRecord(),
 				selection.getActiveColumn().get(KEY),
-				event.newVal
+				newVal
 			);
 		}
 	},
@@ -358,7 +361,7 @@ var BaseCellEditor = A.Component.create({
 					if (instance.get(UNESCAPE_VALUE)) {
 						val = LString.unescapeEntities(val);
 					}
-
+// console.log(val);
 					val = val.replace(REGEX_BR, _NL);
 				}
 
@@ -895,9 +898,7 @@ var BaseOptionsCellEditor = A.Component.create({
 					var name = inputName.val();
 					var value = values.item(index).val();
 
-					if (name && value) {
-						options[value] = name;
-					}
+					options[value] = name;
 				});
 
 				instance.set(OPTIONS, options);
@@ -928,9 +929,9 @@ var BaseOptionsCellEditor = A.Component.create({
 			A.each(val, function(oLabel, oValue) {
 				var values = {
 					id: A.guid(),
-					label: oLabel,
-					name: oValue,
-					value: oValue
+					label: AEscape.html(oLabel),
+					name: AEscape.html(oValue),
+					value: AEscape.html(oValue)
 				};
 
 				if (optionTpl) {
@@ -991,10 +992,10 @@ var BaseOptionsCellEditor = A.Component.create({
 				instance.EDIT_OPTION_ROW_TEMPLATE,
 				{
 					remove: strings[REMOVE],
-					titleName: strings[NAME],
-					titleValue: strings[VALUE],
-					valueName: name,
-					valueValue: value
+					titleName: AEscape.html(strings[NAME]),
+					titleValue: AEscape.html(strings[VALUE]),
+					valueName: AEscape.html(name),
+					valueValue: AEscape.html(value)
 				}
 			);
 		},
@@ -1136,7 +1137,7 @@ var BaseOptionsCellEditor = A.Component.create({
 					}
 
 					AArray.each(val, function(value) {
-						options.filter('[value="' + Lang.trim(value) + '"]').set(instance.get(SELECTED_ATTR_NAME), true);
+						options.filter('[value="' + AEscape.html(Lang.trim(value)) + '"]').set(instance.get(SELECTED_ATTR_NAME), true);
 					});
 				}
 			}
@@ -1435,4 +1436,4 @@ var DateCellEditor = A.Component.create({
 
 A.DateCellEditor = DateCellEditor;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-calendar','aui-datatable-events','aui-toolbar','aui-form-validator','overlay','sortable']});
+}, '@VERSION@' ,{requires:['aui-calendar','aui-datatable-events','aui-toolbar','aui-form-validator','escape','overlay','sortable'], skinnable:true});

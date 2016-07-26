@@ -4,6 +4,8 @@ var L = A.Lang,
 	isNumber = L.isNumber,
 	isString = L.isString,
 
+	AEscape = A.Escape,
+
 	BOOLEAN = 'boolean',
 	CHECKBOX = 'checkbox',
 	CHECKED = 'checked',
@@ -105,10 +107,10 @@ var FormBuilderCheckBoxField = A.Component.create({
 				instance.get(TEMPLATE),
 				{
 					checked: checked ? 'checked="checked"' : EMPTY_STR,
-					id: instance.get(ID),
-					label: instance.get(LABEL),
-					name: instance.get(NAME),
-					value: instance.get(PREDEFINED_VALUE)
+					id: AEscape.html(instance.get(ID)),
+					label: AEscape.html(instance.get(LABEL)),
+					name: AEscape.html(instance.get(NAME)),
+					value: AEscape.html(instance.get(PREDEFINED_VALUE))
 				}
 			);
 		},
