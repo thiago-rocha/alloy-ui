@@ -588,6 +588,12 @@ var FormValidator = A.Component.create({
 
 			removeClasses(field, [VALID_CLASS, ERROR_CLASS]);
 			removeClasses(fieldContainer, [CONTAINER_VALID_CLASS, CONTAINER_ERROR_CLASS]);
+
+			if (field.get(TYPE).toLowerCase() == RADIO && fieldContainer) {
+				var radioFieldContainer = fieldContainer.ancestor('.aui-field-wrapper-content');
+
+				removeClasses(radioFieldContainer, [CONTAINER_VALID_CLASS, CONTAINER_ERROR_CLASS]);
+			}
 		},
 
 		validatable: function(field) {
