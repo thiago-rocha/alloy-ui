@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-3083](https://issues.liferay.com/browse/AUI-3083) Remove day header from agenda view.
 * [AUI-2281](https://issues.liferay.com/browse/AUI-2106) Use arbitrary time to display the red line in day view.
 * [AUI-2106](https://issues.liferay.com/browse/AUI-2106) It should be possible to not show the scheduler's toolbar.
 * [AUI-2080](https://issues.liferay.com/browse/AUI-2080) Agenda view displays too many events if start and end dates are too far away.
