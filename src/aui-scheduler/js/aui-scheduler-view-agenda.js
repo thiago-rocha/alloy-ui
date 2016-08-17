@@ -6,6 +6,7 @@
  */
 
 var Lang = A.Lang,
+    isBoolean = Lang.isBookean,
     isFunction = Lang.isFunction,
     isNumber  = Lang.isNumber,
 
@@ -278,6 +279,22 @@ var SchedulerAgendaView = A.Component.create({
                 return '';
             },
             validator: isFunction
+        },
+
+        /**
+         * Defines whether the view header will be shown or not.
+         *
+         * Note this is not the {A.Scheduler} header that is configured by
+         * {A.Scheduler}'s {showHeader} property. That header contains
+         * the navigation buttons. This header here is the one where the
+         * current date is displayed as a large number.
+         *
+         * @attribute showHeader
+         * @type {Boolean}
+         */
+        showHeader: {
+            validator: isBoolean,
+            value: true
         },
 
         /**
