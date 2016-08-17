@@ -319,7 +319,7 @@ var SchedulerAgendaView = A.Component.create({
      */
     EXTENDS: A.SchedulerView,
 
-    UI_ATTRS: ['daysCount'],
+    UI_ATTRS: ['daysCount', 'showHeader'],
 
     prototype: {
 
@@ -637,6 +637,20 @@ var SchedulerAgendaView = A.Component.create({
             var instance = this;
 
             instance.plotEvents();
+        },
+
+        /**
+         * Update the agenda view according to the new `showHeader` value. If
+         * it is false, the header will be hidden; if it is true, the header
+         * will be displayed.
+         *
+         * @method _uiSetShowHeader
+         * @protected
+         */
+        _uiSetShowHeader: function() {
+            var instance = this;
+
+            instance._toggleHeader();
         }
     }
 });
