@@ -393,19 +393,11 @@ var SchedulerAgendaView = A.Component.create({
 
                 scheduler = instance.get('scheduler'),
 
-                viewDate = scheduler.get('viewDate'),
-
                 eventsDateFormatter = instance.get('eventsDateFormatter'),
 
                 headerDayDateFormatter = instance.get('headerDayDateFormatter'),
 
                 headerExtraDateFormatter = instance.get('headerExtraDateFormatter'),
-
-                infoDayDateFormatter = instance.get('infoDayDateFormatter'),
-
-                infoLabelBigDateFormatter = instance.get('infoLabelBigDateFormatter'),
-
-                infoLabelSmallDateFormatter = instance.get('infoLabelSmallDateFormatter'),
 
                 events = [],
 
@@ -415,16 +407,7 @@ var SchedulerAgendaView = A.Component.create({
 
                 daysLength = days.length;
 
-            instance.set(
-                'headerContent',
-                A.Lang.sub(
-                    TPL_INFO, {
-                        day: infoDayDateFormatter.call(instance, viewDate),
-                        labelBig: infoLabelBigDateFormatter.call(instance, viewDate),
-                        labelSmall: infoLabelSmallDateFormatter.call(instance, viewDate)
-                    }
-                )
-            );
+            instance._toggleHeader();
 
             if (!A.Object.isEmpty(eventsMap)) {
                 AArray.each(
@@ -601,7 +584,45 @@ var SchedulerAgendaView = A.Component.create({
         },
 
         /**
-         * Updated the plotted events to display the new, right amount of days.
+         * Toggles the header view. If `showHeader` property is true, the
+         * header will be shown; if it is false, the header will be hidden.
+         *
+         * @method _toggleHeader
+         * @protected
+         */
+        _toggleHeader: function() {
+            var instance = this,
+
+                headerContent,
+
+                infoDayDateFormatter = instance.get('infoDayDateFormatter'),
+
+                infoLabelBigDateFormatter = instance.get('infoLabelBigDateFormatter'),
+
+                infoLabelSmallDateFormatter = instance.get('infoLabelSmallDateFormatter'),
+
+                scheduler = instance.get('scheduler'),
+
+                viewDate = scheduler.get('viewDate');
+
+            if (instance.get('showHeader')) {
+                headerContent = A.Lang.sub(
+                    TPL_INFO, {
+                        day: infoDayDateFormatter.call(instance, viewDate),
+                        labelBig: infoLabelBigDateFormatter.call(instance, viewDate),
+                        labelSmall: infoLabelSmallDateFormatter.call(instance, viewDate)
+                    }
+                );
+            }
+            else {
+                headerContent = null;
+            }
+
+            instance.set('headerContent', headerContent);
+        },
+
+        /**
+         * Update the plotted events to display the new, right amount of days.
          *
          * Note that the events should still be set into the scheduler. If, for
          * example, one sets events pertaining to 30 days into the scheduler and
