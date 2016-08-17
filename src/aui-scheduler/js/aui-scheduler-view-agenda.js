@@ -6,6 +6,7 @@
  */
 
 var Lang = A.Lang,
+    isBoolean = Lang.isBookean,
     isFunction = Lang.isFunction,
     isNumber  = Lang.isNumber,
 
@@ -281,6 +282,22 @@ var SchedulerAgendaView = A.Component.create({
         },
 
         /**
+         * Defines whether the view header will be shown or not.
+         *
+         * Note this is not the {A.Scheduler} header that is configured by
+         * {A.Scheduler}'s {showHeader} property. That header contains
+         * the navigation buttons. This header here is the one where the
+         * current date is displayed as a large number.
+         *
+         * @attribute showHeader
+         * @type {Boolean}
+         */
+        showHeader: {
+            validator: isBoolean,
+            value: true
+        },
+
+        /**
          * Contains the collection of strings used to label elements of the UI.
          *
          * @attribute strings
@@ -302,7 +319,7 @@ var SchedulerAgendaView = A.Component.create({
      */
     EXTENDS: A.SchedulerView,
 
-    UI_ATTRS: ['daysCount'],
+    UI_ATTRS: ['daysCount', 'showHeader'],
 
     prototype: {
 
@@ -376,19 +393,11 @@ var SchedulerAgendaView = A.Component.create({
 
                 scheduler = instance.get('scheduler'),
 
-                viewDate = scheduler.get('viewDate'),
-
                 eventsDateFormatter = instance.get('eventsDateFormatter'),
 
                 headerDayDateFormatter = instance.get('headerDayDateFormatter'),
 
                 headerExtraDateFormatter = instance.get('headerExtraDateFormatter'),
-
-                infoDayDateFormatter = instance.get('infoDayDateFormatter'),
-
-                infoLabelBigDateFormatter = instance.get('infoLabelBigDateFormatter'),
-
-                infoLabelSmallDateFormatter = instance.get('infoLabelSmallDateFormatter'),
 
                 events = [],
 
@@ -398,16 +407,7 @@ var SchedulerAgendaView = A.Component.create({
 
                 daysLength = days.length;
 
-            instance.set(
-                'headerContent',
-                A.Lang.sub(
-                    TPL_INFO, {
-                        day: infoDayDateFormatter.call(instance, viewDate),
-                        labelBig: infoLabelBigDateFormatter.call(instance, viewDate),
-                        labelSmall: infoLabelSmallDateFormatter.call(instance, viewDate)
-                    }
-                )
-            );
+            instance._toggleHeader();
 
             if (!A.Object.isEmpty(eventsMap)) {
                 AArray.each(
@@ -553,7 +553,7 @@ var SchedulerAgendaView = A.Component.create({
         /**
          * Handles `scheduler` click events.
          *
-         * @method _onEventsHeaderClick
+         * @method _onSchedulerEventClick
          * @param {EventFacade} event
          * @protected
          */
@@ -584,7 +584,45 @@ var SchedulerAgendaView = A.Component.create({
         },
 
         /**
-         * Updated the plotted events to display the new, right amount of days.
+         * Toggles the header view. If `showHeader` property is true, the
+         * header will be shown; if it is false, the header will be hidden.
+         *
+         * @method _toggleHeader
+         * @protected
+         */
+        _toggleHeader: function() {
+            var instance = this,
+
+                headerContent,
+
+                infoDayDateFormatter = instance.get('infoDayDateFormatter'),
+
+                infoLabelBigDateFormatter = instance.get('infoLabelBigDateFormatter'),
+
+                infoLabelSmallDateFormatter = instance.get('infoLabelSmallDateFormatter'),
+
+                scheduler = instance.get('scheduler'),
+
+                viewDate = scheduler.get('viewDate');
+
+            if (instance.get('showHeader')) {
+                headerContent = A.Lang.sub(
+                    TPL_INFO, {
+                        day: infoDayDateFormatter.call(instance, viewDate),
+                        labelBig: infoLabelBigDateFormatter.call(instance, viewDate),
+                        labelSmall: infoLabelSmallDateFormatter.call(instance, viewDate)
+                    }
+                );
+            }
+            else {
+                headerContent = null;
+            }
+
+            instance.set('headerContent', headerContent);
+        },
+
+        /**
+         * Update the plotted events to display the new, right amount of days.
          *
          * Note that the events should still be set into the scheduler. If, for
          * example, one sets events pertaining to 30 days into the scheduler and
@@ -599,6 +637,20 @@ var SchedulerAgendaView = A.Component.create({
             var instance = this;
 
             instance.plotEvents();
+        },
+
+        /**
+         * Update the agenda view according to the new `showHeader` value. If
+         * it is false, the header will be hidden; if it is true, the header
+         * will be displayed.
+         *
+         * @method _uiSetShowHeader
+         * @protected
+         */
+        _uiSetShowHeader: function() {
+            var instance = this;
+
+            instance._toggleHeader();
         }
     }
 });
