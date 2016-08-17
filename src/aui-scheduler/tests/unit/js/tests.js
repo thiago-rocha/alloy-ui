@@ -1241,6 +1241,46 @@ YUI.add('aui-scheduler-tests', function(Y) {
                 Math.abs(top - this._dayView.calculateTop(now)) <= 1,
                 'Line is too far away from the expected position.'
             );
+        },
+
+        'should hide agenda header if disabled, but then display it if requested': function() {
+            this._agendaView = new Y.SchedulerAgendaView({
+                showHeader: false
+            });
+
+            this._createScheduler({
+                views: [this._agendaView]
+            });
+
+            Y.Assert.areEqual(
+                0, Y.all('.scheduler-view-agenda-info-container:visible').size(),
+                'Header should not be visible.'
+            );
+
+            this._agendaView.set('showHeader', true);
+
+            Y.Assert.areEqual(
+                1, Y.all('.scheduler-view-agenda-info-container:visible').size(),
+                'Header should be visible.'
+            );
+        },
+
+        'should display header by default, but then hide it if requested': function() {
+            this._createScheduler({
+                views: [this._agendaView]
+            });
+
+            Y.Assert.areEqual(
+                1, Y.all('.scheduler-view-agenda-info-container:visible').size(),
+                'Header should be visible.'
+            );
+
+            this._agendaView.set('showHeader', false);
+
+            Y.Assert.areEqual(
+                0, Y.all('.scheduler-view-agenda-info-container:visible').size(),
+                'Header should not be visible.'
+            );
         }
     }));
 
