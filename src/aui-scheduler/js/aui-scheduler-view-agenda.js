@@ -553,7 +553,7 @@ var SchedulerAgendaView = A.Component.create({
         /**
          * Handles `scheduler` click events.
          *
-         * @method _onEventsHeaderClick
+         * @method _onSchedulerEventClick
          * @param {EventFacade} event
          * @protected
          */
