@@ -945,6 +945,25 @@ var SchedulerBase = A.Component.create({
             var instance = this;
 
             instance._bindDelegate();
+
+            this._currentTimeInterval = setInterval(A.bind(this.syncCurrentTimeUI, this), 60000);
+        },
+
+        syncCurrentTimeUI: function() {
+            var instance = this;
+            var currentTime = instance.get('currentTimeFn');
+
+            currentTime(A.bind(instance._updatePastEvents, instance));
+        },
+
+        _updatePastEvents: function(date) {
+            var instance = this;
+
+            instance.getEvents().forEach(function(schedulerEvent) {
+                if (schedulerEvent.get('endDate').getTime() < date.getTime()) {
+                    schedulerEvent._uiSetPast(true);
+                }
+            });
         },
 
         /**
